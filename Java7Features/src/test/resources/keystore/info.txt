@@ -1,0 +1,90 @@
+## Create keystore with RSA algorithm ##
+$ keytool -genkeypair -alias myprivate -keyalg RSA -keystore teststore.jks -storepass storepass -keypass privatepass
+What is your first and last name?
+  [Unknown]:  TondoDev
+What is the name of your organizational unit?
+  [Unknown]:  learning
+What is the name of your organization?
+  [Unknown]:  DEV
+What is the name of your City or Locality?
+  [Unknown]:  Bratislava
+What is the name of your State or Province?
+  [Unknown]:  Slovakia
+What is the two-letter country code for this unit?
+  [Unknown]:  SK
+Is CN=TondoDev, OU=learning, O=DEV, L=Bratislava, ST=Slovakia, C=SK correct?
+  [no]:  yes
+  
+## Another RSA entry ##
+$ keytool -genkeypair -alias mybank -keyalg RSA -keystore teststore.jks -storepass storepass -keypass bankpass
+What is your first and last name?
+  [Unknown]:
+What is the name of your organizational unit?
+  [Unknown]:
+What is the name of your organization?
+  [Unknown]:
+What is the name of your City or Locality?
+  [Unknown]:
+What is the name of your State or Province?
+  [Unknown]:
+What is the two-letter country code for this unit?
+  [Unknown]:
+Is CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown correct?
+  [no]:  yes
+  
+## List entries in keystore ##
+$ keytool -list -keystore teststore.jks
+Enter keystore password:
+
+Keystore type: JKS
+Keystore provider: SUN
+
+Your keystore contains 2 entries
+
+myprivate, 5.7.2015, PrivateKeyEntry,
+Certificate fingerprint (SHA1): DD:C4:9D:BC:D8:1C:78:53:4B:28:A8:68:69:FF:86:7D:7C:88:67:F9
+mybank, 5.7.2015, PrivateKeyEntry,
+Certificate fingerprint (SHA1): D4:99:AE:E6:83:53:FB:0A:5C:ED:07:6E:DC:F2:A6:76:AF:AB:2D:0F
+
+## Keystore for SSLServerSocket example ##
+$ keytool -genkey -keyalg RSA -keystore serverstore.jks -storepass storepass
+What is your first and last name?
+  [Unknown]:  tondo
+What is the name of your organizational unit?
+  [Unknown]:  java
+What is the name of your organization?
+  [Unknown]:  dev
+What is the name of your City or Locality?
+  [Unknown]:  Bratislava
+What is the name of your State or Province?
+  [Unknown]:  Slovakia
+What is the two-letter country code for this unit?
+  [Unknown]:  SK
+Is CN=tondo, OU=java, O=dev, L=Bratislava, ST=Slovakia, C=SK correct?
+  [no]:  yes
+
+Enter key password for <mykey>
+        (RETURN if same as keystore password):
+
+
+## Setting keystore programmatically ##
+// these are my parameters for SSL encryption
+char[] keyPassword =  "P@ssw0rd!".toCharArray();
+FileInputStream keyFile = new FileInputStream("ssl.key"); 
+
+// init keystore
+KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+keyStore.load(keyFile, keyPassword);
+// init KeyManagerFactory
+KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+keyManagerFactory.init(keyStore, keyPassword);
+// init KeyManager
+KeyManager keyManagers[] = keyManagerFactory.getKeyManagers();
+// init the SSL context
+SSLContext sslContext = SSLContext.getDefault();
+sslContext.init(keyManagers, null, new SecureRandom());
+// get the socket factory
+SSLServerSocketFactory socketFactory = sslContext.getServerSocketFactory();
+
+// and finally, get the socket
+ServerSocket serverSocket = socketFactory.createServerSocket(443);
