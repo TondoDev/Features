@@ -36,7 +36,7 @@ public class ProcessBuilderTest extends JavaFeaturesTestBase {
 		// java version is printed to stderr
 		InputStream programOutput = proc.getErrorStream();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(programOutput));
-		assertEquals("java version \"1.7.0_60\"", reader.readLine());
+		assertTrue(reader.readLine().startsWith("java version"));
 		
 		// uknown command
 		try {
@@ -64,7 +64,7 @@ public class ProcessBuilderTest extends JavaFeaturesTestBase {
 		// java version is printed to stderr
 		InputStream programOutput = proc.getInputStream();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(programOutput));
-		assertEquals("java version \"1.7.0_60\"", reader.readLine());
+		assertTrue(reader.readLine().startsWith("java version"));
 	}
 	
 	/**
@@ -120,7 +120,8 @@ public class ProcessBuilderTest extends JavaFeaturesTestBase {
 		// whole content of file is readed and first line compared
 		List<String> lines = Files.readAllLines(targetPath, Charset.defaultCharset());
 		assertTrue(lines.size() > 0);
-		assertEquals("java version \"1.7.0_60\"", lines.get(0));
+		assertTrue(lines.get(0).startsWith("java version"));
+//		assertEquals("java version \"1.7.0_60\"", lines.get(0));
 	}
 	
 }

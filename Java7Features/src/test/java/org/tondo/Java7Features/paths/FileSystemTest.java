@@ -51,8 +51,8 @@ public class FileSystemTest extends JavaFeaturesTestBase {
 		List<FileStore> stores = iterableToList(fs.getFileStores());
 
 		// file store is device such a drive, partition or volume
-		// in my system I have 2 partitions
-		assertEquals(2, stores.size());
+		// in my system I have 3 partitions
+		assertEquals(3, stores.size());
 
 		// for storing triples of basic file store identification
 		Set<String> storeNames = new HashSet<>();
@@ -69,7 +69,8 @@ public class FileSystemTest extends JavaFeaturesTestBase {
 			// System.out.println(NumberFormat.getInstance().format(total));
 		}
 
-		assertEquals(cSET("Windows7_OS;NTFS;false", "Data;NTFS;false"),
+		// environment dependent
+		assertEquals(cSET("Windows7_OS;NTFS;false", "Data;NTFS;false", "Documents;NTFS;false"),
 				storeNames);
 
 		// can be used for determine if file store supports such attribute view
@@ -99,7 +100,7 @@ public class FileSystemTest extends JavaFeaturesTestBase {
 				.getRootDirectories());
 		assertEquals(
 				Arrays.asList(Paths.get("C:\\"), Paths.get("D:\\"),
-						Paths.get("E:\\"), Paths.get("F:\\")), rootDirectories);
+						Paths.get("E:\\")), rootDirectories);
 
 		// fost of Files static methods delegate to this provider
 		FileSystemProvider provider = fileSystem.provider();

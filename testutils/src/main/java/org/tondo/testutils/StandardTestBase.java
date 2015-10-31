@@ -81,6 +81,39 @@ public class StandardTestBase {
 		return Paths.get(currentDir, "src", "test", "resources");
 	}
 	
+	/**
+	 * Create path object (not real file) under temporary working directory.
+	 * In other words resolve() provided path parts with path
+	 * representing directory set as tempLocation.
+	 * Actual file may not exists.
+	 * 
+	 * @param part
+	 * 	first part to be assigned to temLocation directory
+	 * @param parts
+	 * 	additional parts to be assigned after first part
+	 * @return
+	 */
+	protected Path inTempDir(String part, String... parts) {
+		return getTempLocation().resolve(Paths.get(part, parts));
+	}
+	
+	
+	/**
+	 * Create path object (not real file) under direcotry set as resourceLocation.
+	 * In other words resolve() provided path parts with path
+	 * representing directory set as resourceLocation.
+	 * Actual file may not exists.
+	 * 
+	 * @param part
+	 * 	first part to be assigned to resourceLocation directory
+	 * @param parts
+	 * 	additional parts to be assigned after first part
+	 * @return
+	 */
+	protected Path inResourceDir(String part, String... parts) {
+		return getResourceLocation().resolve(Paths.get(part, parts));
+	}
+	
 	
 	/**
 	 * Method to override in inherited classes, when some global initialization

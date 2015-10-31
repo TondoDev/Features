@@ -26,24 +26,6 @@ public class JavaFeaturesTestBase extends StandardTestBase{
 	}
 	
 	/**
-	 * Create path objet under temporary working directory.
-	 * In other words resolve() provided path parts with path
-	 * representing current working directory.
-	 * Actual file may not exists.
-	 * 
-	 * @param part
-	 * @param parts
-	 * @return
-	 */
-	protected Path inTempDir(String part, String... parts) {
-		return getTempLocation().resolve(Paths.get(part, parts));
-	}
-	
-	protected Path inResourceDir(String part, String... parts) {
-		return getResourceLocation().resolve(Paths.get(part, parts));
-	}
-	
-	/**
 	 * Returns Path object in working directory if provided path is relative.
 	 * If path is absolute same path is returned.
 	 * @param path

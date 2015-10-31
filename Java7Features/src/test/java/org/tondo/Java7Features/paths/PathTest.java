@@ -34,7 +34,7 @@ public class PathTest {
 		assertEquals("tondo", path.subpath(1, 2).toString());
 		// absolute path is created with adding drive letter (system specific)
 		// path doesn't have to exist
-		assertEquals("D:\\home\\tondo\\zsiros\\pokec", path.toAbsolutePath().toString());
+		assertEquals("C:\\home\\tondo\\zsiros\\pokec", path.toAbsolutePath().toString());
 		
 		//--------------------------------------
 		
@@ -49,7 +49,7 @@ public class PathTest {
 		assertEquals("macka", path2.getFileName().toString());
 		assertEquals("pes\\macka", path2.subpath(1, path2.getNameCount()).toString());
 		// if path not begin with slash, absolute path is created by adding CWD to path
-		assertEquals("D:\\Projekty\\Java\\fxWS\\Java7Features\\zajac\\pes\\macka", path2.toAbsolutePath().toString());
+		assertEquals("C:\\Projekty\\Java\\fxWS\\Features\\Java7Features\\zajac\\pes\\macka", path2.toAbsolutePath().toString());
 		
 		// path with space
 		Path withSpace = Paths.get("/c/pracovna plocha/jazer");
@@ -188,18 +188,18 @@ public class PathTest {
 		}
 		
 		assertNotNull(existing);
-		assertEquals("D:\\Projekty\\Java\\fxWS\\Java7Features\\pom.xml", existing.toString()); 
+		assertEquals("C:\\Projekty\\Java\\fxWS\\Features\\Java7Features\\pom.xml", existing.toString()); 
 		assertTrue(Files.exists(existing));
 		
 		try {
-			existing = Paths.get("../ID3/").toRealPath();
+			existing = Paths.get("../../ID3/").toRealPath();
 		} catch (IOException e) {
 			existing = null;
 		}
 		
 		assertNotNull(existing);
 		// real path is normalized
-		assertEquals("D:\\Projekty\\Java\\fxWS\\ID3", existing.toString()); 
+		assertEquals("C:\\Projekty\\Java\\fxWS\\ID3", existing.toString()); 
 	}
 	
 	/**
