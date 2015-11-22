@@ -2,6 +2,7 @@ package org.tondo.Java7Features.io;
 
 import static org.junit.Assert.*;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,6 +24,7 @@ public class FileModificationTest  extends JavaFeaturesTestBase {
 	
 	private static final int ORIG_SAMPLE_SIZE = 20;
 	private static final int ORIG_PATTERN = 5;
+	private static final int INSERT_PATTERN = 99;
 
 	/**
 	 * Just for check my helper method
@@ -97,8 +99,7 @@ public class FileModificationTest  extends JavaFeaturesTestBase {
 		Path outFile = testProlog();
 		
 		// just for example that only write mode doesn't exists
-		try {
-			RandomAccessFile rac = new RandomAccessFile(outFile.toFile(), "w");
+		try (RandomAccessFile rac = new RandomAccessFile(outFile.toFile(), "w")){
 			fail("IllegalArgumentException expected, due to bad mode");
 		} catch(IllegalArgumentException e) {}
 		
@@ -164,7 +165,7 @@ public class FileModificationTest  extends JavaFeaturesTestBase {
 	}
 	
 	@Test
-	public void testShringAndEnlagreByRAF() throws IOException {
+	public void testShrinkAndEnlagreByRAF() throws IOException {
 		Path outFile = testProlog();
 		final int SHRINK = 10;
 		// at first shrinking
@@ -206,32 +207,255 @@ public class FileModificationTest  extends JavaFeaturesTestBase {
 				os.write(i);
 			}
 		}
-		
+		int moveBy = 6;
+		int moveStart = 5;
 		try (RandomAccessFile raf = new RandomAccessFile(outFile.toFile(), "rw")) {
 			// buffer is small for demonstration of moving blocks
-			int moveBy = 6;
-			int moveStart = 5;
 			this.makeSpace(raf, moveStart, moveBy, 7);
 			raf.seek(moveStart);
-			for (int i =0; i < moveBy; i++) {
+			for (int i = 0; i < moveBy; i++) {
 				raf.write(99);
 			}
 		}
 		
+		
 		byte[] restoredData = Files.readAllBytes(outFile);
-		for (int i = 0; i < restoredData.length; i++) {
-			if (i < 10) {
-				System.out.print(" ");
-			}
-			System.out.print(restoredData[i]);
-			if (i != 0 && (i % 10) == 0) {
-				System.out.println();
-			} else {
-				System.out.print(" ");
-			}
+		// first bytes unchanged
+		for (int i =0; i < moveStart; i++) {
+			assertEquals("index " + i, i, restoredData[i]);
+		}
+		
+		// inserted data
+		for (int i =moveStart; i < moveBy; i++) {
+			assertEquals("index " + i, INSERT_PATTERN, restoredData[i]);
+		}
+		
+		// inserted data
+		for (int i =moveStart + moveBy; i < ORIG_SAMPLE_SIZE; i++) {
+			assertEquals("index " + i, i-moveBy, restoredData[i]);
 		}
 	}
 	
+	@Test
+	public void testInsertDataIntoFileMoreCases() throws IOException {
+		Path outFile = testProlog();
+		int fromIndex, movedBy, bufferSize;
+		byte[] restored = null;
+		
+		fromIndex = 0;
+		movedBy = 20;
+		bufferSize = 20;
+		insertData(outFile, fromIndex, movedBy, bufferSize);
+		restored = Files.readAllBytes(outFile);
+		assertRestoredDataAfterInsert(restored, fromIndex, movedBy);
+		
+		fromIndex = 0;
+		movedBy = 20;
+		bufferSize = 1;
+		outFile = testProlog();
+		insertData(outFile, fromIndex, movedBy, bufferSize);
+		restored = Files.readAllBytes(outFile);
+		assertRestoredDataAfterInsert(restored, fromIndex, movedBy);
+		
+		fromIndex = 0;
+		movedBy = 1;
+		bufferSize = 10;
+		outFile = testProlog();
+		insertData(outFile, fromIndex, movedBy, bufferSize);
+		restored = Files.readAllBytes(outFile);
+		assertRestoredDataAfterInsert(restored, fromIndex, movedBy);
+		
+		fromIndex = 19;
+		movedBy = 5;
+		bufferSize = 10;
+		outFile = testProlog();
+		insertData(outFile, fromIndex, movedBy, bufferSize);
+		restored = Files.readAllBytes(outFile);
+		assertRestoredDataAfterInsert(restored, fromIndex, movedBy);
+		
+		fromIndex = 20;
+		movedBy = 5;
+		bufferSize = 7;
+		outFile = testProlog();
+		insertData(outFile, fromIndex, movedBy, bufferSize);
+		restored = Files.readAllBytes(outFile);
+		assertRestoredDataAfterInsert(restored, fromIndex, movedBy);
+		
+		// moving from far after file length
+		fromIndex = 30;
+		movedBy = 5;
+		bufferSize = 7;
+		outFile = testProlog();
+		insertData(outFile, fromIndex, movedBy, bufferSize);
+		restored = Files.readAllBytes(outFile);
+		assertEquals("File size", 35, restored.length);
+		// original data remains
+		for (int i = 0; i < ORIG_SAMPLE_SIZE; i++) {
+			assertEquals("index " + i, ORIG_PATTERN, restored[i]);
+		}
+		
+		// following zeroed bytes created by RAF
+		for (int i = ORIG_SAMPLE_SIZE; i <  30; i++) {
+			assertEquals("index " + i, 0, restored[i]);
+		}
+		
+		// finally follows inserted data
+		for (int i = 30; i <  35; i++) {
+			assertEquals("index " + i, INSERT_PATTERN, restored[i]);
+		}
+		
+	}
+	
+	@Test
+	public void cutFileContent() throws IOException {
+		Path outFile = testProlog();
+		int fromIndex, movedBy, bufferSize;
+		byte[] restored = null;
+		
+		// create sample file [5, 5, 5, 5, 5, 99, 99, 99, 99, 99, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+		fromIndex = 5;
+		movedBy = 5;
+		bufferSize = 4;
+		insertData(outFile, fromIndex, movedBy, bufferSize);
+		restored = Files.readAllBytes(outFile);
+		assertEquals("Test data original length", 25, restored.length);
+		
+		
+		int cutLen = 4;
+		// shrink content back
+		try (RandomAccessFile raf = new RandomAccessFile(outFile.toFile(), "rw")) {
+			cutOutContent(raf, 5, cutLen, 3);
+		}
+		
+		restored = Files.readAllBytes(outFile);
+		// four bytes removed
+		assertEquals("Shrinked file size", 21, restored.length);
+		// first bytes unchanged
+		for (int i = 0; i < fromIndex; i++) {
+			assertEquals("index " + i, ORIG_PATTERN, restored[i]);
+		}
+		assertEquals("One byte remains", INSERT_PATTERN, restored[fromIndex]);
+		
+		// some bytes
+		for (int i = fromIndex + 1; i < ORIG_SAMPLE_SIZE + movedBy - cutLen; i++) {
+			assertEquals("index " + i, ORIG_PATTERN, restored[i]);
+		}
+	}
+	
+	@Test
+	public void cutOfFileContentMoreCases() throws FileNotFoundException, IOException {
+		Path outFile = testProlog();
+		int fromIndex, movedBy, bufferSize;
+		byte[] restored = null;
+		
+		fromIndex = 5;
+		movedBy = 5;
+		bufferSize = 4;
+		insertData(outFile, fromIndex, movedBy, bufferSize);
+		restored = Files.readAllBytes(outFile);
+		assertEquals("Test data original length", 25, restored.length);
+		
+		int cutLen = 40;
+		// cut of more that overal size of file
+		try (RandomAccessFile raf = new RandomAccessFile(outFile.toFile(), "rw")) {
+			cutOutContent(raf, 5, cutLen, 3);
+		}
+		
+		restored = Files.readAllBytes(outFile);
+		assertEquals("Only first bytes remains", 5, restored.length);
+		
+		//-------------------------------
+		// only last one byte will remain
+		testProlog();
+		try (RandomAccessFile raf = new RandomAccessFile(outFile.toFile(), "rw")) {
+			// write something interesting at last byte
+			raf.seek(raf.length()-1);
+			raf.write(22);
+		}
+		
+		try (RandomAccessFile raf = new RandomAccessFile(outFile.toFile(), "rw")) {
+			cutOutContent(raf, 0, 19, 8);
+		}
+		restored = Files.readAllBytes(outFile);
+		assertEquals("Only last byte", 1, restored.length);
+		assertEquals(22, restored[0]);
+		
+		//-------------------------------
+		// cut all bytes
+		testProlog();
+		try (RandomAccessFile raf = new RandomAccessFile(outFile.toFile(), "rw")) {
+			cutOutContent(raf, 0, 20, 8);
+		}
+		restored = Files.readAllBytes(outFile);
+		assertEquals("Only last byte", 0, restored.length);
+		
+		//-------------------------------
+		// cut one byte
+		testProlog();
+		insertData(outFile, 5, 5, 4);
+		try (RandomAccessFile raf = new RandomAccessFile(outFile.toFile(), "rw")) {
+			cutOutContent(raf, 4, 1, 7);
+		}
+		restored = Files.readAllBytes(outFile);
+		assertEquals("Only last byte", 24, restored.length);
+		// first bytes unchanged
+		for (int i = 0; i < 4; i++) {
+			assertEquals("index " + i, ORIG_PATTERN, restored[i]);
+		}
+				
+		// inserted byte sequence
+		for (int i = 4; i < 9; i++) {
+			assertEquals("index " + i, INSERT_PATTERN, restored[i]);
+		}
+		
+		for (int i = 9; i < 24; i++) {
+			assertEquals("index " + i, ORIG_PATTERN, restored[i]);
+		}
+	}
+	
+	
+	private void insertData(Path file, int fromIndex, int moveBy, int bufferSize) throws FileNotFoundException, IOException {
+		try (RandomAccessFile raf = new RandomAccessFile(file.toFile(), "rw")) {
+			this.makeSpace(raf, fromIndex, moveBy, bufferSize);
+			raf.seek(fromIndex);
+			for (int i = 0; i < moveBy; i++) {
+				raf.write(INSERT_PATTERN);
+			}
+		}	
+	}
+	
+	private void assertRestoredDataAfterInsert(byte[] restoredData, int fromIndex, int movedBy) {
+		// first bytes unchanged
+		for (int i = 0; i < fromIndex; i++) {
+			assertEquals("index " + i, ORIG_PATTERN, restoredData[i]);
+		}
+
+		// inserted data
+		for (int i = fromIndex; i < movedBy; i++) {
+			assertEquals("index " + i, INSERT_PATTERN, restoredData[i]);
+		}
+
+		// inserted data
+		for (int i = fromIndex + movedBy; i < ORIG_SAMPLE_SIZE; i++) {
+			assertEquals("index " + i, ORIG_PATTERN, restoredData[i]);
+		}
+	}
+	
+	/**
+	 * Vytvori miesto pre vlozenie noveho obsahu v subere s nahodnym pristupom.
+	 * Miesto sa vytvori posunutim ostavajuceho obsahu o velkost noveho miesta.
+	 * Vytvorene nove miesto nie je inicializovane a hodnota bytov sa nezmenila.
+	 * @param raf
+	 * 	otvoreny subor s nahodnym pristupom, v ktorom sa bude miesto vystvarat
+	 * @param fromIndex
+	 * 	index v subore od ktoreho ma byt vytvorene nove miest
+	 * @param moveBy
+	 * 	velkost vytvoreneho miesta
+	 * @param buffSize
+	 * 	velkost buffra pouziteho pri presuvani blokov. Len pokusny charakter na overenie
+	 *  spravnosti algoritmu
+	 * @throws IOException
+	 */
 	private void makeSpace(RandomAccessFile raf, long fromIndex, long moveBy, int buffSize) throws IOException {
 		byte[] moveBuffer = new byte[buffSize];
 		
@@ -250,8 +474,35 @@ public class FileModificationTest  extends JavaFeaturesTestBase {
 			raf.seek(fromIndex + moveBy);
 			raf.write(moveBuffer, 0, read);
 		}
+	}
+	
+	/**
+	 * Cuts out contetn of file, Final size will be lower than original
+	 * @param raf
+	 * @param fromIndex
+	 * @param count
+	 * @param buffSize
+	 * @throws IOException 
+	 */
+	private void cutOutContent(RandomAccessFile raf, long fromIndex, long count, int buffSize) throws IOException {
+		byte[] moveBuffer = new byte[buffSize];
+		long len =  raf.length();
 		
-//		if (currCopy >= mo)
+		if (fromIndex + count >= len) {
+			raf.setLength(fromIndex);
+			return;
+		}
+		
+		long currRead = fromIndex + count;
+		while (currRead < len) {
+			raf.seek(currRead);
+			int read = raf.read(moveBuffer);
+			raf.seek(currRead-count);
+			raf.write(moveBuffer, 0, read);
+			currRead += buffSize;
+		}
+		
+		raf.setLength(len-count);
 	}
 	
 	
