@@ -26,7 +26,7 @@ public class UnescapingTest {
 
 	@Test
 	public void testUnscapingAnswer() throws IOException {
-		InputStream is = getClass().getResourceAsStream("/eight/unescaping.txt");
+		InputStream is = getClass().getResourceAsStream("/dayeight/unescaping.txt");
 		assertNotNull(is);
 		
 		int diff = getCodesVSMemLenDiff(is);
