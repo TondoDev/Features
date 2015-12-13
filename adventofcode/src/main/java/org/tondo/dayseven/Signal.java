@@ -18,6 +18,7 @@ public class Signal {
 	private String name;
 	private int value;
 	private boolean initialized;
+	private boolean enabled;
 	private List<GateListener> gateListeners;
 	private List<Signal> signalListeners; // forgotten situaltion about connection signal directly to other signal
 	private int transaction = -1;
@@ -25,6 +26,7 @@ public class Signal {
 	public Signal(String name) {
 		this.name = name;
 		this.initialized = false;
+		this.enabled = false;
 		this.gateListeners = new ArrayList<>();
 		this.signalListeners = new ArrayList<>();
 	}
@@ -33,19 +35,21 @@ public class Signal {
 		this.value = value;
 		this.initialized = true;
 		
-		if (this.transaction == TransactionManager.getTxId()) {
-			throw new IllegalStateException("Components loop detected! (transction: " + transaction + ")");
+		if (this.isEnabled()) {
+			if (this.transaction == TransactionManager.getTxId()) {
+				throw new IllegalStateException("Components loop detected! (transction: " + transaction + ")");
+			}
+			
+			for (GateListener gl : this.gateListeners) {
+				gl.gate.setInputValue(gl.gateParam, value);
+			}
+			
+			for (Signal s : this.signalListeners) {
+				s.setValue(value);
+			}
+			
+			this.transaction = TransactionManager.getTxId();
 		}
-		
-		for (GateListener gl : this.gateListeners) {
-			gl.gate.setInputValue(gl.gateParam, value);
-		}
-		
-		for (Signal s : this.signalListeners) {
-			s.setValue(value);
-		}
-		
-		this.transaction = TransactionManager.getTxId();
 	}
 		
 	public int getValue() {
@@ -76,6 +80,21 @@ public class Signal {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public void setEnabled(boolean flag) {
+		
+		this.enabled = flag;
+		if (!this.enabled) {
+			this.initialized = false;
+		} else if (this.enabled && this.isInitialized()) {
+			// rerun listeners
+			setValue(this.value);
+		}
+	}
+	
+	public boolean isEnabled() {
+		return enabled;
 	}
 	
 	@Override

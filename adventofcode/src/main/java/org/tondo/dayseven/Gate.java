@@ -8,6 +8,7 @@ public abstract class Gate {
 	
 	protected boolean aValid;
 	protected boolean bValid;
+	private boolean enabled;
 	private String name;
 	
 	private int transaction = -1;
@@ -26,6 +27,9 @@ public abstract class Gate {
 		}
 		this.output = outputWire;
 		this.name = name;
+		this.enabled = false;
+		this.aValid = false;
+		this.bValid = false;
 	}
 	
 	
@@ -49,7 +53,7 @@ public abstract class Gate {
 	public abstract int computeValue(int a, int b);
 	
 	private void generateOutput(int transaction) {
-		if (inputsValids()) {
+		if (isEnabled() && inputsValids()) {
 			if (this.transaction == transaction) {
 				throw new IllegalStateException("Components loop detected! (transction: " + transaction + ")");
 			}
@@ -63,6 +67,21 @@ public abstract class Gate {
 	public void reset() {
 		this.aValid = false;
 		this.bValid = false;
+	}
+	
+	public void setEnabled(boolean flag) {
+		if (this.enabled == flag) {
+			return;
+		}
+		this.enabled = flag;
+		
+		if(this.enabled) {
+			generateOutput(TransactionManager.getTxId());
+		}
+	}
+	
+	public boolean isEnabled() {
+		return enabled;
 	}
 	
 	
@@ -123,25 +142,5 @@ public abstract class Gate {
 	@Override
 	public String toString() {
 		return this.name.isEmpty() ? "(Gate name empty)" : this.name;
-	}
-	
-	public static Gate getGate(String operation, Signal ouput, String gateId) {
-		
-		switch (operation) {
-		case "NOT":
-			return getNOT(ouput, gateId);
-		case "AND":
-			return getAND(ouput, gateId);
-		case "OR" :
-			return getOR(ouput, gateId);
-		case "LSHIFT":
-			return getLSHIFT(ouput, gateId);
-		case "RSHIFT":
-			return getRSHIFT(ouput, gateId);
-		default:
-			throw new IllegalArgumentException("Unknow Gate operaion " + operation);
-		}
-		
-		
 	}
 }
