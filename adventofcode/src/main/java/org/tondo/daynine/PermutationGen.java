@@ -34,11 +34,12 @@ public class PermutationGen {
 	private void permute(String[] items, int lastIndex, PermutationHadler handler) {
 		this.permCount++;
 		
-		boolean even = lastIndex % 2 == 0;
+		
 		
 		if ( lastIndex == 1) {
 			handler.handle(items);
 		} else {
+			boolean even = lastIndex % 2 == 0;
 			for (int i = 0; i < lastIndex - 1; i++) {
 				permute(items, lastIndex - 1, handler);
 				if (even) {
