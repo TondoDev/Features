@@ -63,9 +63,20 @@ public class JsonAccountingTest {
 		assertEquals(6L, balance);
 		
 		try {
-			is = new ByteArrayInputStream("[1,2,\"pepek\",3]".getBytes());
+			is = new ByteArrayInputStream("[2,\"pepek\",3,]".getBytes());
 			balance = processor.getBalance(is);
-			assertEquals(6L, balance);
+			fail("Syntax error expected");
+		} catch (IllegalStateException e) {}
+		
+		try {
+			is = new ByteArrayInputStream("[2,\"pepek\"3]".getBytes());
+			balance = processor.getBalance(is);
+			fail("Syntax error expected");
+		} catch (IllegalStateException e) {}
+		
+		try {
+			is = new ByteArrayInputStream("[,\"pepek\",3]".getBytes());
+			balance = processor.getBalance(is);
 			fail("Syntax error expected");
 		} catch (IllegalStateException e) {}
 	

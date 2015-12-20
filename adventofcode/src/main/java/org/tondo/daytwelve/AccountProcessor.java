@@ -15,6 +15,13 @@ public class AccountProcessor {
 		DONE
 	}
 	
+	private static enum ArrState {
+		START,
+		DELIMETED,
+		STANDARD,
+		STRING,
+	}
+	
 	
 	public long getBalance(InputStream is) throws IOException {
 		
@@ -114,26 +121,50 @@ public class AccountProcessor {
 		long sum = 0L;
 		boolean closed = false;
 		int c = -1;
+		ArrState state = ArrState.START;
 		StringBuilder token = null;
 		while ((c = reader.read()) != -1) {
 			if (c == '[') {
+				if(state != ArrState.START && state != ArrState.DELIMETED) {
+					throw new IllegalStateException("Syntax error!");
+				}
+				state = ArrState.STANDARD;
 				long num =  getFromArray(ignore, reader);
 				sum += ignore ? 0L : num;
 			} else if (c == ']') {
+				if (state == ArrState.DELIMETED) {
+					throw new IllegalStateException("Syntax error!");
+				}
 				closed = true;
 				long num = tokenToSum(token);
 				sum += ignore ? 0L : num;
 				token = null;
 				break;
 			} else if ( c == '{') {
+				if(state != ArrState.START && state != ArrState.DELIMETED) {
+					throw new IllegalStateException("Syntax error!");
+				}
+				state = ArrState.STANDARD;
 				long num =  getFromObject(ignore, reader);
 				sum += ignore ? 0L : num;
 			} else if (c == '"') {
+				if(state != ArrState.START && state != ArrState.DELIMETED) {
+					throw new IllegalStateException("Syntax error!");
+				}
+				state = ArrState.STRING;
 				parseString(reader);
 			} else if ( c == ',') {
+				if (state == ArrState.START) {
+					throw new IllegalStateException("Syntax error!");
+				}
+				state = ArrState.DELIMETED;
 				sum += tokenToSum(token);
 				token = null;
 			} else if (!Character.isWhitespace((char)c)) {
+				if(state == ArrState.STRING) {
+					throw new IllegalStateException("Syntax error! " + state);
+				}
+				state = ArrState.STANDARD;
 				token = tokenKeeper(token).append((char) c);
 			}
 		}
