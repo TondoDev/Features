@@ -154,7 +154,7 @@ public class AccountProcessor {
 				state = ArrState.STRING;
 				parseString(reader);
 			} else if ( c == ',') {
-				if (state == ArrState.START) {
+				if (state == ArrState.START || state == ArrState.DELIMETED) {
 					throw new IllegalStateException("Syntax error!");
 				}
 				state = ArrState.DELIMETED;

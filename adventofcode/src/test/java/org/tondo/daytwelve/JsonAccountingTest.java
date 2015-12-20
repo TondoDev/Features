@@ -79,6 +79,12 @@ public class JsonAccountingTest {
 			balance = processor.getBalance(is);
 			fail("Syntax error expected");
 		} catch (IllegalStateException e) {}
+		
+		try {
+			is = new ByteArrayInputStream("[\"pepek\",,3]".getBytes());
+			balance = processor.getBalance(is);
+			fail("Syntax error expected");
+		} catch (IllegalStateException e) {}
 	
 	}
 	
