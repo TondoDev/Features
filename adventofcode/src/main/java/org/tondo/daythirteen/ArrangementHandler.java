@@ -20,8 +20,6 @@ public class ArrangementHandler implements PermutationHadler {
 		this.bestHappiness = -1;
 		this.strict = strict;
 	}
-	
-	
 
 	@Override
 	public void handle(String[] permutation) {
@@ -46,7 +44,6 @@ public class ArrangementHandler implements PermutationHadler {
 		if (currHapp > this.bestHappiness) {
 			this.bestHappiness = currHapp;
 		}
-		
 	}
 	
 	/**
@@ -75,7 +72,6 @@ public class ArrangementHandler implements PermutationHadler {
 		if (this.happinesTable.get(who).get(right) == null) {
 			throw new IllegalStateException("No happiness record for: " + who + " (right) " + right);
 		}
-		
 	}
 	
 	public String[] getBestSeating() {
