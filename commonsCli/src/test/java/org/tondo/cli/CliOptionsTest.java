@@ -50,8 +50,8 @@ public class CliOptionsTest {
 				// specifies if options should have argument, whithout this, following cmd string 
 				// without -- or - prefix will be treated as program argument, not options argument
 				.hasArg(true)
-				// relevant with .hasArg(true), if set to true, otion argument can be ommitted
-				// withoud crashing on parse exception
+				// relevant with .hasArg(true), if set to true, option argument can be omitted
+				// without crashing on parse exception
 				.optionalArg(true)
 //				.argName("b") // this is not name of options but its value???
 				.longOpt("base")
