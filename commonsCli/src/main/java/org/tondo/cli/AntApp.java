@@ -79,7 +79,7 @@ public class AntApp {
 	}
 	
 	
-	private static Options initCmdOptions() {
+	private Options initCmdOptions() {
 		Options options = new Options();
 		
 		// boolean arguments, only for querying if they are provided or not
