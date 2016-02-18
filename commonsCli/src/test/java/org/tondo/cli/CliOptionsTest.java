@@ -215,7 +215,7 @@ public class CliOptionsTest {
 	public void testGitLikeAssignmet() throws ParseException {
 		Option dopt = Option.builder()
 				.longOpt("author")
-				.hasArgs()
+				.hasArg()
 				.build();
 		Options options = new Options();
 		options.addOption(dopt);
