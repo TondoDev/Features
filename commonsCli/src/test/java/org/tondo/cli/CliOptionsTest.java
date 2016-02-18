@@ -210,4 +210,18 @@ public class CliOptionsTest {
 			fail("UnrecognizedOptionException expected!");
 		} catch (UnrecognizedOptionException e) {}
 	}
+	
+	@Test
+	public void testGitLikeAssignmet() throws ParseException {
+		Option dopt = Option.builder()
+				.longOpt("author")
+				.hasArgs()
+				.build();
+		Options options = new Options();
+		options.addOption(dopt);
+		
+		CommandLineParser parser = new DefaultParser();
+		CommandLine result = parser.parse(options, new String[] {"--author=popey"});
+		assertEquals("popey", result.getOptionValue("author"));
+	}
 }
