@@ -51,7 +51,7 @@ public class SafeVarargsTest {
 	
 	@Test
 	public void testVargargsGenerics() {
-		ConsoleOutputCapturer capturer = new ConsoleOutputCapturer();
+		ConsoleOutputCapturer capturer = ConsoleOutputCapturer.getInstance();
 		capturer.capture();
 		displayValues(1, 2L, 3.0, "Ahoj", BigDecimal.valueOf(8));
 		capturer.stopCapturing();

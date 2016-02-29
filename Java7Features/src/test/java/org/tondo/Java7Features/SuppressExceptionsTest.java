@@ -19,7 +19,7 @@ public class SuppressExceptionsTest {
 	
 	@BeforeClass
 	public static void init() {
-		capturer = new ConsoleOutputCapturer();
+		capturer = ConsoleOutputCapturer.getInstance();
 	}
 	
 	@AfterClass
