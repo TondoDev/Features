@@ -9,10 +9,10 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
-import org.tondo.sslhandshake.SimpleSSLClient;
-import org.tondo.sslhandshake.SimpleSSLServer;
 import org.tondo.testutils.StandardTestBase;
 
 /**
@@ -57,6 +57,20 @@ public class TestSSLHandshake extends StandardTestBase {
 		client.join();
 		
 		assertEquals("Client received correct data", "CS", client.getResponse());
+		List<String> expectedServerLogs = Arrays.asList(
+					// first returns null with EC_EC algorithm
+					"1. S chooseServerAlias", 
+					// this was called with RSA which returns correct alias
+					"2. S chooseServerAlias",
+					"3. S getPrivateKey",
+					"4. S getCertificateChain");
+		assertEquals("server logs", expectedServerLogs,  server.getLogs());
+		
+		List<String> expectedClientLogs = Arrays.asList(
+				"5. C checkServerTrusted", 
+				"6. C getAcceptedIssuers");
+		assertEquals("client logs", expectedClientLogs, client.getLogs());
+		
 		System.out.println(client.getLogs());
 		System.out.println(server.getLogs());
 	}
