@@ -1,11 +1,11 @@
-package org.zsiros.calculator.test;
+package org.tondo.calculator.test;
 
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.zsiros.calculator.CalculatorException;
-import org.zsiros.calculator.StringCalculator;
+import org.tondo.calculator.CalculatorException;
+import org.tondo.calculator.StringCalculator;
 
 /**
  * 

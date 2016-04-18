@@ -1,4 +1,4 @@
-package org.zsiros.calculator;
+package org.tondo.calculator;
 
 /**
  * Calculates sum of numbers provided in input delimited by exactly one

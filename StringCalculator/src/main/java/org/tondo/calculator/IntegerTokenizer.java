@@ -1,4 +1,4 @@
-package org.zsiros.calculator;
+package org.tondo.calculator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

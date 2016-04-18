@@ -1,4 +1,4 @@
-package org.zsiros.calculator;
+package org.tondo.calculator;
 
 /**
  * Exception thrown by StringCalculator
