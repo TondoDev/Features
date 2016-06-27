@@ -2,6 +2,10 @@ package org.tondo.Java7Features;
 
  import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Test;
 
 /**
@@ -97,6 +101,41 @@ public class StringSwitchTest {
 	
 	private String getNull() {
 		return null;
+	}
+	
+	@Test
+	public void testSwithcDefaultNotLast() {
+		List<String> collector = new ArrayList<>();
+		
+		switch("pes") {
+		case "mama":
+			collector.add("A");
+			break;
+		default:
+			collector.add("B");
+			break;
+		case "pes":
+			collector.add("C");
+		}
+		
+		assertEquals(Arrays.asList("C"), collector);
+	}
+	
+	@Test
+	public void testSwithcDefaultNotLastWithoutBreak() {
+		List<String> collector = new ArrayList<>();
+		
+		switch("xxx") {
+		case "mama":
+			collector.add("A");
+			break;
+		default:
+			collector.add("B");
+		case "pes":
+			collector.add("C");
+		}
+		
+		assertEquals(Arrays.asList("B", "C"), collector);
 	}
 			
 }
