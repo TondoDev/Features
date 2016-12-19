@@ -39,5 +39,6 @@ public class Day1Test {
 		}
 		
 		System.out.println("Day 1 - Part 1: Distance: " + nav.getDistance()); // 230
+		System.out.println("Day 1 - Part 2: Distance: " + nav.getBunnyLocationDistance()); //154
 	}
 }
