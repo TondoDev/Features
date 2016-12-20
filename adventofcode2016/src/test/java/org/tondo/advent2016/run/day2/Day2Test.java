@@ -7,8 +7,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
 import org.junit.Test;
+import org.tondo.advent2016.day2.Decryptor;
 import org.tondo.advent2016.day2.DiamondDecryptor;
-import org.tondo.advent2016.day2.PasswordDecrypt;
+import org.tondo.advent2016.day2.ClassicDecrypt;
 
 /**
  * Bathroom security
@@ -24,8 +25,8 @@ public class Day2Test {
 		InputStream input = getClass().getResourceAsStream("/day2/day2Part1.txt");
 		
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(input, Charset.forName("UTF-8")))) {
-			PasswordDecrypt decryptor = new PasswordDecrypt();
-			DiamondDecryptor diamond = new DiamondDecryptor();
+			Decryptor decryptor = new ClassicDecrypt();
+			Decryptor diamond = new DiamondDecryptor();
 			
 			String line = null;
 			while ((line = reader.readLine()) != null) {

@@ -5,20 +5,17 @@ package org.tondo.advent2016.day2;
  * @author TondoDev
  *
  */
-public class PasswordDecrypt {
+public class ClassicDecrypt extends Decryptor{
 	
 	private int currentPosition;
-	private StringBuilder numBuffer;
-	private static final String DIRECTIONS = "UDLR";
 	
-	public PasswordDecrypt() {
+	public ClassicDecrypt() {
 		this.currentPosition = 5;
-		this.numBuffer = new StringBuilder();
 	}
 
 	public void decryptLine(String instructions) {
 		this.currentPosition = decrypt(instructions, this.currentPosition);
-		this.numBuffer.append(this.currentPosition);
+		storeChar((char)(this.currentPosition + '0'));
 	}
 	
 	private int decrypt(String instructions, int pos) {
@@ -53,16 +50,5 @@ public class PasswordDecrypt {
 		}
 		
 		return newPos;
-	}
-	
-	private void validateDirection(Character c) {
-		if (DIRECTIONS.indexOf(c) < 0 ) {
-			throw new IllegalArgumentException("Character '" + c + "' is not valid direction!");
-		}
-	}
-	
-	
-	public String getPassword() {
-		return numBuffer.toString();
 	}
 }

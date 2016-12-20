@@ -5,9 +5,8 @@ package org.tondo.advent2016.day2;
  * @author TondoDev
  *
  */
-public class DiamondDecryptor {
+public class DiamondDecryptor extends Decryptor {
 	
-	private static final String DIRECTIONS = "UDLR";
 	private static final char[][] KEYBOARD = {
 				{' ', ' ', '1', ' ', ' '},
 				{' ', '2', '3', '4', ' '},
@@ -20,15 +19,10 @@ public class DiamondDecryptor {
 	private int yPos;
 	private static final int MAX = 5;
 	
-	private StringBuilder password;
-	
-	
 	public DiamondDecryptor() {
 		this.xPos = 0;
 		this.yPos = 2;
-		this.password = new StringBuilder();
 	}
-	
 	
 	public void decryptLine(String line) {
 		int len = line.length();
@@ -58,18 +52,6 @@ public class DiamondDecryptor {
 				}
 			}
 		}
-		
-		this.password.append(KEYBOARD[this.yPos][this.xPos]);
-	}
-	
-	private void validateDirection(Character c) {
-		if (DIRECTIONS.indexOf(c) < 0 ) {
-			throw new IllegalArgumentException("Character '" + c + "' is not valid direction!");
-		}
-	}
-	
-	
-	public String getPassword() {
-		return password.toString();
+		storeChar(KEYBOARD[this.yPos][this.xPos]);
 	}
 }
