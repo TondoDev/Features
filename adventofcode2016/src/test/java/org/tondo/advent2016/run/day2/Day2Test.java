@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
 import org.junit.Test;
+import org.tondo.advent2016.day2.DiamondDecryptor;
 import org.tondo.advent2016.day2.PasswordDecrypt;
 
 /**
@@ -24,13 +25,16 @@ public class Day2Test {
 		
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(input, Charset.forName("UTF-8")))) {
 			PasswordDecrypt decryptor = new PasswordDecrypt();
+			DiamondDecryptor diamond = new DiamondDecryptor();
 			
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				decryptor.decryptLine(line);
+				diamond.decryptLine(line);
 			}
 			
-			System.out.println("Day 2 - Part 1: " + decryptor.getPassword()); // 56855
+			System.out.println("Day 2 - Part 1: password " + decryptor.getPassword()); // 56855
+			System.out.println("Day 2 - Part 2: password " + diamond.getPassword()); // B3C27
 		}
 	}
 }
