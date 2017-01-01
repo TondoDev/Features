@@ -29,7 +29,8 @@ public class Day6Test {
 				}
 			}
 			
-			System.out.println("Day 6 Part 1: message " + recon.reconstruct());
+			System.out.println("Day 6 Part 1: message " + recon.reconstruct());	// xhnqpqql
+			System.out.println("Day 6 Part 2: message " + recon.reconstructMin()); // brhailro
 		}
 	}
 }

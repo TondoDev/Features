@@ -47,6 +47,29 @@ public class MessageReconstructor {
 		return buffer.toString();
 	}
 	
+	public String reconstructMin() {
+		StringBuilder buffer = new StringBuilder();
+		
+		for (Map<Character, Integer> entry : this.charCounter) {
+			buffer.append(findMinOccured(entry));
+		}
+		
+		return buffer.toString();
+	}
+	
+	private char findMinOccured(Map<Character, Integer> chars) {
+		char minxChar = 127;
+		int minOccurence = Integer.MAX_VALUE;
+		for (Map.Entry<Character, Integer> entry : chars.entrySet()) {
+			if (entry.getValue() < minOccurence) {
+				minxChar = entry.getKey();
+				minOccurence = entry.getValue();
+			}
+		}
+		
+		return minxChar;
+	}
+	
 	private char findMaxOccured(Map<Character, Integer> chars) {
 		char maxChar = 0;
 		int maxOccurence = -1;
@@ -59,5 +82,4 @@ public class MessageReconstructor {
 		
 		return maxChar;
 	}
-
 }
