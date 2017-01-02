@@ -14,7 +14,7 @@ import org.tondo.advent2016.day7.TlsProcessor;
 
 /**
  * 
- * 
+ * @author TondoDev
  *
  */
 public class Day7Test {
@@ -30,7 +30,8 @@ public class Day7Test {
 				processor.processIP(line);
 			}
 			
-			System.out.println("Day 7 Part 1: Tls supported addresses: " + processor.getTlsSupportedCount()); // 118
+			System.out.println("Day 7 Part 1: TLS supported addresses: " + processor.getTlsSupportedCount()); // 118
+			System.out.println("Day 7 Part 2: SSL supported addresses: " + processor.getSslSupportedCount());
 		}
 	}
 	
@@ -46,5 +47,14 @@ public class Day7Test {
 		assertTrue(proc.isTlsSupported("ioxxoj[asdfgh]zxcvbn"));
 		assertTrue(proc.isTlsSupported("saaaadioxxoj[asdfgh]zxcvbn"));
 		assertFalse(proc.isTlsSupported("pfvpbqmyapypiubxmt[kjfhekecjzzqftpj]sybxxlmvzhloooom"));
+	}
+	
+	@Test
+	public void testSSlSignatures() {
+		TlsProcessor proc = new TlsProcessor();
+		assertTrue(proc.isSslSupported("aba[bab]xyz"));
+		assertFalse(proc.isSslSupported("xyx[xyx]xyx"));
+		assertTrue(proc.isSslSupported("aaa[kek]eke"));
+		assertTrue(proc.isSslSupported("zazbz[bzb]cdb"));
 	}
 }
