@@ -30,7 +30,7 @@ public class Day7Test {
 				processor.processIP(line);
 			}
 			
-			System.out.println("Day 7 Part 1: Tls supported addresses: " + processor.getTlsSupportedCount());
+			System.out.println("Day 7 Part 1: Tls supported addresses: " + processor.getTlsSupportedCount()); // 118
 		}
 	}
 	
@@ -44,6 +44,7 @@ public class Day7Test {
 		assertFalse(proc.isTlsSupported("aaaa[qwer]tyui"));
 		assertTrue(proc.isTlsSupported("aaaa[qwer]xyyx"));
 		assertTrue(proc.isTlsSupported("ioxxoj[asdfgh]zxcvbn"));
+		assertTrue(proc.isTlsSupported("saaaadioxxoj[asdfgh]zxcvbn"));
 		assertFalse(proc.isTlsSupported("pfvpbqmyapypiubxmt[kjfhekecjzzqftpj]sybxxlmvzhloooom"));
 	}
 }

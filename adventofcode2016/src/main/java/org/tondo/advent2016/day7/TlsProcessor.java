@@ -53,11 +53,12 @@ public class TlsProcessor {
 	
 	private boolean hasTlsSignature(String token) {
 		Matcher m = SIGNATURE.matcher(token);
-		if (m.find()) {
-			return !m.group(1).equals(m.group(2));
+		boolean found = false;
+		while (m.find() && !found) {
+			found = found || !m.group(1).equals(m.group(2));
 		}
 		
-		return false;
+		return found;
 	}
 	
 	
