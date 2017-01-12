@@ -1,5 +1,7 @@
 package org.tondo.advent2016.run.day8;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,5 +34,23 @@ public class Day8Test {
 			
 			System.out.println("Day 8 Part 1 - Lit pixels count: " + screen.getLitPixelsCount());
 		}
+	}
+	
+	@Test
+	public void testScreen() {
+		TinyScreen screen = new TinyScreen();
+		assertEquals("empty screen", 0, screen.getLitPixelsCount());
+		
+		screen.rect(2, 2);
+		assertEquals("switched on 2x2 area", 4, screen.getLitPixelsCount());
+		screen.rect(2, 2);
+		assertEquals("switched on 2x2 SAME area", 4, screen.getLitPixelsCount());
+		screen.rect(3, 2);
+		assertEquals("switched on 3x2 overlaped area", 6, screen.getLitPixelsCount());
+		System.out.println(screen);
+		System.out.println();
+		screen.rotateCol(1, 2);
+		System.out.println(screen);
+		assertEquals("Rotation doesn't change lit pixes", 6, screen.getLitPixelsCount());
 	}
 }
