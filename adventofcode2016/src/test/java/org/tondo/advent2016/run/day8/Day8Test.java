@@ -42,15 +42,14 @@ public class Day8Test {
 		assertEquals("empty screen", 0, screen.getLitPixelsCount());
 		
 		screen.rect(2, 2);
-		assertEquals("switched on 2x2 area", 4, screen.getLitPixelsCount());
+		
+		screen.rotateRow(0, 2);
+		screen.rotateRow(1, 2);
+		
+		screen.rotateCol(2, 2);
+		screen.rotateCol(3, 2);
+		
 		screen.rect(2, 2);
-		assertEquals("switched on 2x2 SAME area", 4, screen.getLitPixelsCount());
-		screen.rect(3, 2);
-		assertEquals("switched on 3x2 overlaped area", 6, screen.getLitPixelsCount());
-		System.out.println(screen);
-		System.out.println();
-		screen.rotateCol(1, 2);
-		System.out.println(screen);
-		assertEquals("Rotation doesn't change lit pixes", 6, screen.getLitPixelsCount());
+		assertEquals(8, screen.getLitPixelsCount());
 	}
 }

@@ -52,7 +52,7 @@ public class InsctructionDecoder {
 
 		@Override
 		public void execute(TinyScreen screen) {
-			screen.ratateRow(row, pixels);
+			screen.rotateRow(row, pixels);
 		}
 	}
 	

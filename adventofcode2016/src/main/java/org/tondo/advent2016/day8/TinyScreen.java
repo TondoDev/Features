@@ -7,7 +7,7 @@ package org.tondo.advent2016.day8;
  */
 public class TinyScreen {
 
-	private static final int COLS = 10;//50
+	private static final int COLS = 50;
 	private static final int ROWS = 6;
 	private static final byte LIT = 0x0F;
 	
@@ -38,26 +38,36 @@ public class TinyScreen {
 		}
 	}
 	
-	public void rotateCol(int col, int pixels) {
-		int rotate = pixels % ROWS;
+	public void rotateCol(int col, int rotateCount) {
+		int rotate = rotateCount % ROWS;
 		// nothing to do
 		if (rotate == 0) {
 			return;
 		}
-		byte buff = this.pixels[0][col];
-		int bi = 0;
 		
-		for (int r = 0; r < ROWS; r++) {
-			int dest = (bi + rotate) % ROWS;
-			byte tmp = this.pixels[dest][col];
-			this.pixels[dest][col] = buff;
-			buff = tmp;
-			bi = dest;
+		for (int cnt = 0; cnt < rotate; cnt++) {
+			byte lastItem =  this.pixels[ROWS - 1][col];
+			for (int r = ROWS - 1; r > 0 ; r--) {
+				this.pixels[r][col] = this.pixels[r - 1][col];
+			}
+			this.pixels[0][col] = lastItem;
 		}
 	}
 	
-	public void ratateRow(int row, int pixels) {
+	public void rotateRow(int row, int rotateCount) {
+		int rotate = rotateCount % COLS;
+		// nothing to do
+		if (rotate == 0) {
+			return;
+		}
 		
+		for (int cnt = 0; cnt < rotate; cnt++) {
+			byte lastItem =  this.pixels[row][COLS - 1];
+			for (int c = COLS - 1; c > 0 ; c--) {
+				this.pixels[row][c] = this.pixels[row][c - 1];
+			}
+			this.pixels[row][0] = lastItem;
+		}
 	}
 	
 	@Override
@@ -74,7 +84,6 @@ public class TinyScreen {
 			}
 			builder.append("\n");
 		}
-		// TODO Auto-generated method stub
 		return builder.toString();
 	}
 }
