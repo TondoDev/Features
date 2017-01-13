@@ -2,6 +2,7 @@ package org.tondo.advent2016.day9;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 
 /**
  * 
@@ -74,6 +75,19 @@ public class Decompressor {
 		}
 	}
 	
+	private int expend(Mark compressMark, Reader reader) throws IOException {
+		if (compressMark.getCharsCount() == 0) {
+			return 0;
+		}
+		
+		int readed = 0;
+		while (readed < compressMark.getCharsCount() && reader.read() != -1) {
+			readed++;
+		}
+		
+		return readed * compressMark.getRepeatCount();
+	}
+	
 	private Mark readComressionMark(Reader reader) throws IOException {
 		StringBuilder token = new StringBuilder();
 		
@@ -115,20 +129,49 @@ public class Decompressor {
 		return new Mark(readedCnt);
 	}
 	
+	public void decompressRecursive(Reader reader) throws IOException {
+		this.decompressedLen = decompressRecursiveInternal(reader, decompressedLen);
+	}
 	
-	private int expend(Mark compressMark, Reader reader) throws IOException {
+	private long decompressRecursiveInternal(Reader reader, long currenLen) throws IOException {
+		int readChar = 0;
+		while((readChar = reader.read()) != -1) {
+			char c = (char) readChar;
+			
+			if (c == '(') {
+				Mark mark = readComressionMark(reader);
+				if (mark.isOk()) {
+					currenLen = recursiveExpand(mark, reader, currenLen);
+				} else {
+					// incorrect syntax in mark is treated as standard data
+					// count also opening bracket.
+					currenLen += (mark.getReadedData() + 1);
+				}
+			} else if (!Character.isWhitespace(c)) {
+				// ignoring whitespace
+				currenLen++;
+			}
+		}
+		
+		return currenLen;
+	}
+	
+	
+	private long recursiveExpand(Mark compressMark, Reader reader, long currenLen) throws IOException {
 		if (compressMark.getCharsCount() == 0) {
 			return 0;
 		}
 		
 		int readed = 0;
-		while (readed < compressMark.getCharsCount() && reader.read() != -1) {
+		int data = 0;
+		StringBuilder buffer = new StringBuilder();
+		while (readed < compressMark.getCharsCount() && (data = reader.read()) != -1) {
 			readed++;
+			buffer.append((char)data);
 		}
 		
-		return readed * compressMark.getRepeatCount();
+		return compressMark.getRepeatCount() * decompressRecursiveInternal(new StringReader(buffer.toString()), 0L) + currenLen;
 	}
-	
 	
 	public long getDecompressedLen() {
 		return decompressedLen;

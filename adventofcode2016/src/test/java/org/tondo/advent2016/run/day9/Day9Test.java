@@ -30,6 +30,17 @@ public class Day9Test {
 		}
 	}
 	
+	@Test
+	public void testPart2() throws UnsupportedEncodingException, IOException {
+		InputStream input = getClass().getResourceAsStream("/day9/day9Part1.txt");
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"))) {
+			Decompressor decompressor = new Decompressor();
+			decompressor.decompressRecursive(reader);
+			
+			System.out.println("Day 9 Part 2: Recursively decomressed length: " + decompressor.getDecompressedLen()); // 11797310782
+		}
+	}
+	
 	
 	@Test
 	public void testDecompressor() throws IOException {
@@ -74,5 +85,27 @@ public class Day9Test {
 		dec = new Decompressor();
 		dec.decompress(new StringReader("X(8x2)(3x3)ABCY"));
 		assertEquals(18, dec.getDecompressedLen());
+	}
+	
+	@Test
+	public void testRecursiveDecomressor() throws IOException {
+		Decompressor dec = null;
+		
+		dec = new Decompressor();
+		dec.decompressRecursive(new StringReader(""));
+		assertEquals("empty string", 0, dec.getDecompressedLen());
+		
+		
+		dec = new Decompressor();
+		dec.decompressRecursive(new StringReader("X(8x2)(3x3)ABCY"));
+		assertEquals(20, dec.getDecompressedLen());
+		
+		dec = new Decompressor();
+		dec.decompressRecursive(new StringReader("(27x12)(20x12)(13x14)(7x10)(1x12)A"));
+		assertEquals(241920L, dec.getDecompressedLen());
+		
+		dec = new Decompressor();
+		dec.decompressRecursive(new StringReader("(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN"));
+		assertEquals(445L, dec.getDecompressedLen());
 	}
 }
