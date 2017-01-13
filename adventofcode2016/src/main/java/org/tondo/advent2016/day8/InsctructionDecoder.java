@@ -56,10 +56,9 @@ public class InsctructionDecoder {
 		}
 	}
 	
-	
-	private static final Pattern REACT = Pattern.compile("rect ([1-9][0-9]*)x([1-9][0-9]*)");
-	private static final Pattern ROTATE = Pattern.compile("rotate (row|column) x|y=([1-9][0-9]*) by ([1-9][0-9]*)");
-	
+	private static final Pattern REACT = Pattern.compile("^rect ([1-9][0-9]*)x([1-9][0-9]*)$");
+	private static final Pattern ROTATE_COL = Pattern.compile("^rotate column x=([0-9][0-9]*) by ([1-9][0-9]*)$");
+	private static final Pattern ROTATE_ROW = Pattern.compile("^rotate row y=([0-9][0-9]*) by ([1-9][0-9]*)$");
 
 	
 	public ScreenInstruction decode(String instructionRaw) {
@@ -70,17 +69,14 @@ public class InsctructionDecoder {
 			return new RectInstr(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
 		}
 		
-		m = ROTATE.matcher(trimed);
+		m = ROTATE_ROW.matcher(trimed);
 		if (m.find()) {
-			String op = m.group(1);
-			
-			if ("column".equals(op)) {
-				return new ColRotation(Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)));
-			} else if ("row".equals(op)) {
-				return new RowRotation(Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)));
-			}
-			// else not possible
-
+			return new RowRotation(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
+		}
+		
+		m = ROTATE_COL.matcher(trimed);
+		if(m.find()) {
+			return new ColRotation(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
 		}
 		
 		throw new IllegalArgumentException("Invalid instruction code: " + instructionRaw);
