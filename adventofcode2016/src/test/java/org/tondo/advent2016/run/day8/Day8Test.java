@@ -36,7 +36,7 @@ public class Day8Test {
 				instr.execute(screen);
 			}
 			
-			System.out.println("Day 8 Part 1 - Lit pixels count: " + screen.getLitPixelsCount());
+			System.out.println("Day 8 Part 1 - Lit pixels count: " + screen.getLitPixelsCount()); // 116 - UPOJFLBCEZ
 			System.out.println(screen);
 		}
 	}
