@@ -48,9 +48,7 @@ public class BotSwarm {
 		BotInstruction instr = decode(encodedInstruction);
 		
 		if (instr.execute(this)) {
-			if (getTerminatingBotId() == null) {
-				processQeue();
-			}
+			processQeue();
 		} else {
 			this.instructionQeue.add(instr);
 		}
@@ -70,7 +68,7 @@ public class BotSwarm {
 					break;
 				}
 			}
-		} while(changeFlag && getTerminatingBotId() == null);
+		} while(changeFlag);
 	}
 	
 	public Bot getBot(int botId) {
@@ -88,6 +86,16 @@ public class BotSwarm {
 	
 	public Integer getTerminatingBotId() {
 		return terminatingBotId;
+	}
+	
+	public int getMultipliedOutput(int maxBin) {
+		
+		int rv = 1;
+		for (int i = 0; i <= maxBin; i++) {
+			rv *= this.outputBins.get(i);
+		}
+		
+		return rv;
 	}
 	
 	public void printInfo() {

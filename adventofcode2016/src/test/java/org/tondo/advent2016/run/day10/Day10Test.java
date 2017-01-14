@@ -31,13 +31,11 @@ public class Day10Test {
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				swarm.processInstruction(line);
-				if (swarm.getTerminatingBotId() != null) {
-					System.out.println("Day 10 Part 1 - 17 and 61 comparing botId is: " + swarm.getTerminatingBotId());
-					break;
-				}
 			}
 			
 			swarm.printInfo();
+			System.out.println("Day 10 Part 1 - 17 and 61 comparing botId is: " + swarm.getTerminatingBotId());
+			System.out.println("Day 10 Part 2 - Multiplication of 0,1,2 output bins: " + swarm.getMultipliedOutput(2));
 		}
 	}
 	
