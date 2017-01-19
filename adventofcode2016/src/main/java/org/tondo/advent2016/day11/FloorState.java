@@ -13,7 +13,6 @@ import java.util.Map;
 public class FloorState {
 	private Map<Integer, List<String>> floors;
 	private int elevatorFloor;
-	private String id;
 
 	public FloorState(Map<Integer, List<String>> floors, int elevatorFloor) {
 		Map<Integer, List<String>> tmp = new HashMap<>();
@@ -34,26 +33,33 @@ public class FloorState {
 		return elevatorFloor;
 	}
 	
-	public String getId() {
-		if (this.id == null) {
-			this.id = generateId();
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof FloorState)) {
+			return false;
 		}
 		
-		return this.id;
-	}
-	
-	private String generateId() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("$" + this.elevatorFloor);
+		if (this == obj) {
+			return true;
+		}
+		FloorState other = (FloorState) obj;
+		if (this.elevatorFloor !=  other.elevatorFloor) {
+			return false;
+		}
 		
-		for (int floor = 1; floor <= 4; floor++) {
-			sb.append("#" + floor);
-			List<String> floorContent = this.floors.get(floor);
-			for (String dev : floorContent) {
-				sb.append(dev);
+		if (this.floors.size() != other.floors.size()) {
+			return false;
+		}
+		
+		for (Map.Entry<Integer, List<String>> currEntry : this.floors.entrySet()) {
+			List<String> othList = other.floors.get(currEntry.getKey());
+			
+			if (othList == null || !currEntry.getValue().equals(othList)) {
+				return false;
 			}
 		}
 		
-		return sb.toString();
+		return true;
 	}
 }
