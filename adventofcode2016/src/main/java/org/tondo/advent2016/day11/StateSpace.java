@@ -45,21 +45,22 @@ public class StateSpace {
 		}
 		
 		this.fifo = new LinkedList<>();
+		this.fifo.add(new InternalState(initialState, null, 0));
 		int minimum = -1;
 		while(!this.fifo.isEmpty()) {
 			InternalState processing = this.fifo.removeFirst();
-			if (endState.equals(processing)) {
+			if (endState.equals(processing.curr)) {
 				if (minimum < 0 || minimum > processing.steps) {
 					minimum = processing.steps;
 					constructMinPath(processing, minimalPath);
+					System.out.println(minimum);
 				}
 			} else {
 				this.fifo.addAll(generateNextStates(processing));
 			}
-			
 		}
 		
-		return 0;
+		return minimum;
 	}
 	
 	private List<InternalState> generateNextStates(InternalState currState) {
@@ -79,7 +80,7 @@ public class StateSpace {
 			
 			for (int direction : new int[] {-1, 1}) {
 				int nextFloor = currState.curr.getElevatorFloor() + direction;
-				if (nextFloor <= 4 && nextFloor >= 0) {
+				if (nextFloor <= 4 && nextFloor >= 1) {
 					List<String> currentTargetFloorState = currState.curr.getFloors().get(nextFloor);
 					List<String> nextTargetFloorState = new ArrayList<>(currentTargetFloorState);
 					nextTargetFloorState.addAll(state);
@@ -88,7 +89,8 @@ public class StateSpace {
 						nextFloors.put(nextFloor, nextTargetFloorState);
 						nextFloors.put(currState.curr.getElevatorFloor(), nextSourceFloorState);
 						FloorState fs = new FloorState(nextFloors, nextFloor);
-						if (!fs.equals(currState.prev)) {
+						if (!fs.equals(currState.prev == null ? null : currState.prev.curr)) {
+							debugPrint(fs, currState);
 							rv.add(new InternalState(fs, currState, currState.steps+1));
 						}
 					}
@@ -96,6 +98,14 @@ public class StateSpace {
 			}
 		}
 		return rv;
+	}
+	// cur: {1=[2m], 2=[1g, 1m], 3=[2g], 4=[]}|| e = 2 {1=[2m], 2=[1m], 3=[2g, 1g], 4=[]}|| e = 3
+	// why didnt generated state 3=[1g,1m,2g] ??
+	private void debugPrint(FloorState next, InternalState curr) {
+		//System.out.println("prv: " + (curr.prev == null ? null : curr.prev.curr));
+		System.out.println("cur: " + curr.curr + " " +next);
+		//System.out.println("next: " + next);
+		//System.out.println();
 	}
 	
 	private boolean isValidFloorConfiguration(List<String> devices) {

@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 import org.tondo.advent2016.day11.ConfigurationReader;
+import org.tondo.advent2016.day11.StateSpace;
 
 /**
  * 
@@ -22,11 +23,13 @@ public class Day11Test {
 
 	@Test
 	public void testPart1() throws IOException {
-		InputStream input = this.getClass().getResourceAsStream("/day11/day11Part1.txt");
+		InputStream input = this.getClass().getResourceAsStream("/day11/tmp.txt");
 		try (BufferedReader reader = new BufferedReader( new InputStreamReader(input, Charset.forName("UTF-8")))) {
 			ConfigurationReader conf = new ConfigurationReader();
 			conf.readConfiguration(reader);
-			
+			StateSpace stateSpace = new StateSpace(conf.getInitialState());
+			int steps = stateSpace.findMinimalSteps(conf.getEndState());
+			System.out.println("Day 11 Part 1: Minimal steps: " + steps);
 		}
 	}
 	

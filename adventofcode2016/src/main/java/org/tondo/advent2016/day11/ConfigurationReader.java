@@ -68,8 +68,13 @@ public class ConfigurationReader {
 		}
 	}
 	
-	
 	public FloorState getInitialState() {
+		// ensure that empty floors contains empty list, not null
+		for (int i = 1; i <= 4; i++) {
+			if(this.floors.get(i) == null) {
+				this.floors.put(i, Collections.<String>emptyList());
+			}
+		}
 		return new FloorState(this.floors, 1);
 	}
 	

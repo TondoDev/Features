@@ -18,7 +18,7 @@ public class SubsetGen {
 	
 	
 	public SubsetGen(List<String> items, int k) {
-		this.maxK = k;
+		this.maxK = items.size() >= k ? k : items.size();
 		this.items = new ArrayList<>(items);
 		this.size = this.items.size();
 		this.indices = new int[this.maxK];

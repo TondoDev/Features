@@ -2,8 +2,10 @@ package org.tondo.advent2016.day11;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 
@@ -53,13 +55,18 @@ public class FloorState {
 		}
 		
 		for (Map.Entry<Integer, List<String>> currEntry : this.floors.entrySet()) {
-			List<String> othList = other.floors.get(currEntry.getKey());
+			Set<String> othList = new HashSet<>(other.floors.get(currEntry.getKey()));
 			
-			if (othList == null || !currEntry.getValue().equals(othList)) {
+			if (othList == null || !new HashSet<>(currEntry.getValue()).equals(othList)) {
 				return false;
 			}
 		}
 		
 		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return this.floors.toString() + "|| e = " + this.elevatorFloor;
 	}
 }
