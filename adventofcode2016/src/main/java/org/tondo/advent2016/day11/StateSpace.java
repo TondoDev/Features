@@ -1,10 +1,13 @@
 package org.tondo.advent2016.day11;
 
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 
@@ -14,7 +17,7 @@ import java.util.Map;
 public class StateSpace {
 	private static final int ELEVATOR_CAPACITY = 2;
 	
-	private static class InternalState {
+	public static class InternalState {
 		int steps;
 		FloorState curr;
 		InternalState prev;
@@ -29,41 +32,45 @@ public class StateSpace {
 	private FloorState initialState;
 	private LinkedList<InternalState> fifo;
 	private LinkedList<FloorState> minimalPath;
+	private Set<String> visited = new HashSet<>();
 	
 	
 	public StateSpace(FloorState init) {
 		this.initialState = init;
 	}
 	
-	
 	public int findMinimalSteps(FloorState endState) {
 		
+		this.visited = new HashSet<>();
 		this.minimalPath = new LinkedList<>();
 		if (initialState.equals(endState)) {
 			this.minimalPath.add(initialState);
 			return 0;
 		}
 		
+		int solutions = 0;
 		this.fifo = new LinkedList<>();
 		this.fifo.add(new InternalState(initialState, null, 0));
 		int minimum = -1;
 		while(!this.fifo.isEmpty()) {
 			InternalState processing = this.fifo.removeFirst();
 			if (endState.equals(processing.curr)) {
+				solutions++;
 				if (minimum < 0 || minimum > processing.steps) {
 					minimum = processing.steps;
 					constructMinPath(processing, minimalPath);
-					System.out.println(minimum);
+					System.out.println("Min: " + minimum);
 				}
 			} else {
 				this.fifo.addAll(generateNextStates(processing));
 			}
 		}
-		
+		System.out.println("Solutions found: " + solutions);
+		System.out.println("Visited states: " + this.visited.size());
 		return minimum;
 	}
 	
-	private List<InternalState> generateNextStates(InternalState currState) {
+	public List<InternalState> generateNextStates(InternalState currState) {
 		List<InternalState> rv = new ArrayList<>();
 		
 		List<String> curretnFloorState = currState.curr.getFloors().get(currState.curr.getElevatorFloor());
@@ -89,8 +96,7 @@ public class StateSpace {
 						nextFloors.put(nextFloor, nextTargetFloorState);
 						nextFloors.put(currState.curr.getElevatorFloor(), nextSourceFloorState);
 						FloorState fs = new FloorState(nextFloors, nextFloor);
-						if (!fs.equals(currState.prev == null ? null : currState.prev.curr)) {
-							debugPrint(fs, currState);
+						if (isStateVisited(fs, currState)) {
 							rv.add(new InternalState(fs, currState, currState.steps+1));
 						}
 					}
@@ -99,16 +105,18 @@ public class StateSpace {
 		}
 		return rv;
 	}
-	// cur: {1=[2m], 2=[1g, 1m], 3=[2g], 4=[]}|| e = 2 {1=[2m], 2=[1m], 3=[2g, 1g], 4=[]}|| e = 3
-	// why didnt generated state 3=[1g,1m,2g] ??
-	private void debugPrint(FloorState next, InternalState curr) {
-		//System.out.println("prv: " + (curr.prev == null ? null : curr.prev.curr));
-		System.out.println("cur: " + curr.curr + " " +next);
-		//System.out.println("next: " + next);
-		//System.out.println();
+	
+	private boolean isStateVisited(FloorState newState, InternalState currentConfiguration) {
+		FloorState previous = currentConfiguration.prev == null ? null : currentConfiguration.prev.curr;
+		boolean canVisit = this.visited.add(previous + "->" + newState.toString());
+		if (!canVisit) {
+			System.out.println(previous + "->" + newState.toString());
+		}
+		
+		return canVisit && !newState.equals(previous);
 	}
 	
-	private boolean isValidFloorConfiguration(List<String> devices) {
+	public boolean isValidFloorConfiguration(List<String> devices) {
 		for (String dev : devices) {
 			char element = dev.charAt(0);
 			char deviceType = dev.charAt(1);
@@ -122,13 +130,20 @@ public class StateSpace {
 	}
 	
 	private boolean isChipInDanger(char elem, List<String> devices) {
+		
+		boolean inDanger = false;
+		boolean hasProtection = false;
 		for (String dev : devices) {
-			if (dev.charAt(1) == 'g' && dev.charAt(0) != elem) {
-				return true;
+			if (dev.charAt(1) == 'g') {
+				if (dev.charAt(0) != elem) {
+					inDanger = true;
+				} else {
+					hasProtection = true;
+				}
 			}
 		}
 		
-		return false;
+		return inDanger && !hasProtection;
 	}
 	
 	private void constructMinPath(InternalState state, LinkedList<FloorState> target) {
@@ -138,5 +153,11 @@ public class StateSpace {
 			target.addFirst(tmp.curr);
 			tmp = tmp.prev;
 		} while(tmp != null);
+	}
+	
+	public void printMinaml() {
+		for (FloorState s : this.minimalPath) {
+			System.out.println(s);
+		}
 	}
 }

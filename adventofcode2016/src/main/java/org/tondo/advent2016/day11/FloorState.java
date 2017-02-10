@@ -15,12 +15,15 @@ import java.util.Set;
 public class FloorState {
 	private Map<Integer, List<String>> floors;
 	private int elevatorFloor;
+	
+	private static final int NUM_OF_FLOORS = 4;
 
 	public FloorState(Map<Integer, List<String>> floors, int elevatorFloor) {
 		Map<Integer, List<String>> tmp = new HashMap<>();
 		
-		for (Map.Entry<Integer, List<String>> e : floors.entrySet()) {
-			tmp.put(e.getKey(), (e.getValue() == null ? Collections.<String>emptyList() : Collections.unmodifiableList(e.getValue())));
+		for (int i = 1; i <= NUM_OF_FLOORS; i++) {
+			List<String> value = floors.get(i);
+			tmp.put(i, (value == null ? Collections.<String>emptyList() : Collections.unmodifiableList(value)));
 		}
 		
 		this.floors = Collections.unmodifiableMap(tmp);
@@ -46,6 +49,11 @@ public class FloorState {
 			return true;
 		}
 		FloorState other = (FloorState) obj;
+		
+		if (other.floors.get(4).size() == 10) {
+			System.out.println("---------");
+		}
+		
 		if (this.elevatorFloor !=  other.elevatorFloor) {
 			return false;
 		}
