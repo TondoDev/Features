@@ -1,6 +1,5 @@
 package org.tondo.advent2016.day11;
 
-import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,12 +55,14 @@ public class StateSpace {
 			InternalState processing = this.fifo.removeFirst();
 			if (endState.equals(processing.curr)) {
 				solutions++;
+				System.out.println("Solution: " + solutions + " steps: " + processing.steps);
+				System.out.println(constructMinPath(processing));
 				if (minimum < 0 || minimum > processing.steps) {
 					minimum = processing.steps;
-					constructMinPath(processing, minimalPath);
+					this.minimalPath = constructMinPath(processing);
 					System.out.println("Min: " + minimum);
 				}
-			} else {
+			} else if (minimum < 0 || minimum > processing.steps) {
 				this.fifo.addAll(generateNextStates(processing));
 			}
 		}
@@ -86,17 +87,17 @@ public class StateSpace {
 			}
 			
 			for (int direction : new int[] {-1, 1}) {
-				int nextFloor = currState.curr.getElevatorFloor() + direction;
-				if (nextFloor <= 4 && nextFloor >= 1) {
-					List<String> currentTargetFloorState = currState.curr.getFloors().get(nextFloor);
+				int nextFloorNumber = currState.curr.getElevatorFloor() + direction;
+				if (nextFloorNumber <= 4 && nextFloorNumber >= 1) {
+					List<String> currentTargetFloorState = currState.curr.getFloors().get(nextFloorNumber);
 					List<String> nextTargetFloorState = new ArrayList<>(currentTargetFloorState);
 					nextTargetFloorState.addAll(state);
 					if (isValidFloorConfiguration(nextTargetFloorState)) {
 						Map<Integer, List<String>> nextFloors = new HashMap<>(currState.curr.getFloors());
-						nextFloors.put(nextFloor, nextTargetFloorState);
+						nextFloors.put(nextFloorNumber, nextTargetFloorState);
 						nextFloors.put(currState.curr.getElevatorFloor(), nextSourceFloorState);
-						FloorState fs = new FloorState(nextFloors, nextFloor);
-						if (isStateVisited(fs, currState)) {
+						FloorState fs = new FloorState(nextFloors, nextFloorNumber);
+						if (!isStateAlreadyVisited(fs, currState)) {
 							rv.add(new InternalState(fs, currState, currState.steps+1));
 						}
 					}
@@ -106,14 +107,18 @@ public class StateSpace {
 		return rv;
 	}
 	
-	private boolean isStateVisited(FloorState newState, InternalState currentConfiguration) {
-		FloorState previous = currentConfiguration.prev == null ? null : currentConfiguration.prev.curr;
-		boolean canVisit = this.visited.add(previous + "->" + newState.toString());
-		if (!canVisit) {
-			System.out.println(previous + "->" + newState.toString());
+	private boolean isStateAlreadyVisited(FloorState newState, InternalState currentConfiguration) {
+		InternalState tmp = currentConfiguration;
+		
+		while (tmp != null) {
+			if (newState.equals(tmp.curr)) {
+				return true;
+			}
+			
+			tmp = tmp.prev;
 		}
 		
-		return canVisit && !newState.equals(previous);
+		return false;
 	}
 	
 	public boolean isValidFloorConfiguration(List<String> devices) {
@@ -146,13 +151,14 @@ public class StateSpace {
 		return inDanger && !hasProtection;
 	}
 	
-	private void constructMinPath(InternalState state, LinkedList<FloorState> target) {
-		target.clear();
+	private  LinkedList<FloorState>  constructMinPath(InternalState state) {
+		LinkedList<FloorState> target = new LinkedList<>();
 		InternalState tmp = state;
 		do {
 			target.addFirst(tmp.curr);
 			tmp = tmp.prev;
 		} while(tmp != null);
+		return target;
 	}
 	
 	public void printMinaml() {
