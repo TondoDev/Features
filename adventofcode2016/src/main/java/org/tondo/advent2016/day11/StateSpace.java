@@ -82,8 +82,7 @@ public class StateSpace {
 	
 	public List<InternalState> generateNextStates(InternalState currState) {
 		List<InternalState> rv = new ArrayList<>();
-		
-		Set<String> curretnFloorState = currState.curr.getFloors().get(currState.curr.getElevatorFloor());
+		Set<String> curretnFloorState = currState.curr.getFloorConfiguration(currState.curr.getElevatorFloor());
 		SubsetGen stateGen = new SubsetGen(curretnFloorState, ELEVATOR_CAPACITY);
 		
 		while (stateGen.hasNext()) {
@@ -102,7 +101,7 @@ public class StateSpace {
 				
 				int nextFloorNumber = currState.curr.getElevatorFloor() + direction;
 				if (nextFloorNumber <= 4 && nextFloorNumber >= 1) {
-					Set<String> currentTargetFloorState = currState.curr.getFloors().get(nextFloorNumber);
+					Set<String> currentTargetFloorState = currState.curr.getFloorConfiguration(nextFloorNumber);
 					Set<String> nextTargetFloorState = new HashSet<>(currentTargetFloorState);
 					nextTargetFloorState.addAll(state);
 					if (isValidFloorConfiguration(nextTargetFloorState)) {
@@ -125,7 +124,7 @@ public class StateSpace {
 			return false;
 		}
 		for (int i = 1 ; i < state.getElevatorFloor(); i++) {
-			if(!state.getFloors().get(i).isEmpty()) {
+			if(!state.getFloorConfiguration(i).isEmpty()) {
 				return false;
 			}
 			
