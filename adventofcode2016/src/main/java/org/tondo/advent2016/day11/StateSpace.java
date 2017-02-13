@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 /**
  * 
@@ -29,7 +30,7 @@ public class StateSpace {
 	}
 	
 	private FloorState initialState;
-	private LinkedList<InternalState> fifo;
+	private Stack<InternalState> fifo;
 	private LinkedList<FloorState> minimalPath;
 	private Set<String> visited = new HashSet<>();
 	
@@ -39,6 +40,7 @@ public class StateSpace {
 	}
 	
 	public int findMinimalSteps(FloorState endState) {
+		int cntLoop = 0;
 		
 		this.visited = new HashSet<>();
 		this.minimalPath = new LinkedList<>();
@@ -48,22 +50,29 @@ public class StateSpace {
 		}
 		
 		int solutions = 0;
-		this.fifo = new LinkedList<>();
+		this.fifo = new Stack<>();
 		this.fifo.add(new InternalState(initialState, null, 0));
 		int minimum = -1;
 		while(!this.fifo.isEmpty()) {
-			InternalState processing = this.fifo.removeFirst();
+			InternalState processing = this.fifo.pop();
 			if (endState.equals(processing.curr)) {
 				solutions++;
 				System.out.println("Solution: " + solutions + " steps: " + processing.steps);
-				System.out.println(constructMinPath(processing));
+				//System.out.println(constructMinPath(processing));
 				if (minimum < 0 || minimum > processing.steps) {
 					minimum = processing.steps;
 					this.minimalPath = constructMinPath(processing);
 					System.out.println("Min: " + minimum);
 				}
-			} else if (minimum < 0 || minimum > processing.steps) {
-				this.fifo.addAll(generateNextStates(processing));
+			} else if (processing.steps < 50 && (minimum < 0 || (minimum - 1) > processing.steps)) {
+				for (InternalState is : generateNextStates(processing)) {
+					this.fifo.push(is);	
+				}
+			}
+			cntLoop++;
+			if (cntLoop == 1000000) {
+				cntLoop = 0;
+				System.out.println("Lifo: " + this.fifo.size() + " steps: " + processing.steps);
 			}
 		}
 		System.out.println("Solutions found: " + solutions);
@@ -87,6 +96,10 @@ public class StateSpace {
 			}
 			
 			for (int direction : new int[] {-1, 1}) {
+				if (direction == -1 && isBelowEmpty(initialState)) {
+					continue;
+				}
+				
 				int nextFloorNumber = currState.curr.getElevatorFloor() + direction;
 				if (nextFloorNumber <= 4 && nextFloorNumber >= 1) {
 					List<String> currentTargetFloorState = currState.curr.getFloors().get(nextFloorNumber);
@@ -105,6 +118,19 @@ public class StateSpace {
 			}
 		}
 		return rv;
+	}
+	
+	private boolean isBelowEmpty(FloorState state) {
+		if (state.getElevatorFloor() == 1) {
+			return false;
+		}
+		for (int i = 1 ; i < state.getElevatorFloor(); i++) {
+			if(!state.getFloors().get(i).isEmpty()) {
+				return false;
+			}
+			
+		}
+		return true;
 	}
 	
 	private boolean isStateAlreadyVisited(FloorState newState, InternalState currentConfiguration) {
