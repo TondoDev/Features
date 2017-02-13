@@ -61,4 +61,46 @@ public class StateSpaceTest {
 		assertEquals(-1, minMoves);
 	}
 	
+	@Test
+	public void testBasicHomomorph() {
+		FloorState begin = new FloorStateBuilder(1)
+				.floor(4, "1m")
+				.build();
+		
+		FloorState end = new FloorStateBuilder(4)
+				.floor(4, "1m")
+				.build();
+		
+		assertTrue("Equal are homomorphic too", begin.isHomomorphic(end));
+		
+		end = new FloorStateBuilder(4)
+					.floor(4, "4m")
+					.build();
+		assertTrue("Same device, different element", begin.isHomomorphic(end));
+		
+		end = new FloorStateBuilder(4)
+				.floor(4, "4g")
+				.build();
+		assertFalse("Different device is not homom.", begin.isHomomorphic(end));
+	}
+	
+	@Test
+	public void testComplexHomo() {
+		FloorState begin = new FloorStateBuilder(1)
+				.floor(4, "1m", "2g")
+				.floor(3, "1g", "3g")
+				.floor(2, "3m", "2m")
+				.floor(1, "4m", "4g")
+				.build();
+		
+		FloorState end = new FloorStateBuilder(1)
+				.floor(4, "3m", "4g")
+				.floor(3, "3g", "1g")
+				.floor(2, "1m", "4m")
+				.floor(1, "2m", "2g")
+				.build();
+		
+		assertTrue(begin.isHomomorphic(end));
+	}
+	
 }

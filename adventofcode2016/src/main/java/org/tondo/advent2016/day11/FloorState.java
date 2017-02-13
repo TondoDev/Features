@@ -147,6 +147,7 @@ public class FloorState {
 		
 		// marked elements already mapped from second (inner)
 		Set<Integer> mappedSecond = new HashSet<>();
+		int mappedRemaining = first.size();
 		for (Map.Entry<Integer, Set<String>> entryOuter : first.entrySet()) {
 			for (Map.Entry<Integer, Set<String>> entryInner : second.entrySet()) {
 				if (!entryOuter.getValue().equals(entryInner.getValue()) || !mappedSecond.add(entryInner.getKey())) {
@@ -156,14 +157,13 @@ public class FloorState {
 				Integer translation = mapping.get(entryOuter.getKey());
 				if (translation == null) {
 					mapping.put(entryOuter.getKey(), entryInner.getKey());
-				} else if (!translation.equals(entryInner.getKey())) {
-					return false;
+					mappedRemaining--;
+				} else if (translation.equals(entryInner.getKey())) {
+					mappedRemaining--;
 				}
-				
-				break;
 			}
 		}
-		return false;
+		return mappedRemaining == 0;
 	}
 	
 	@Override
