@@ -83,12 +83,12 @@ public class StateSpace {
 	public List<InternalState> generateNextStates(InternalState currState) {
 		List<InternalState> rv = new ArrayList<>();
 		
-		List<String> curretnFloorState = currState.curr.getFloors().get(currState.curr.getElevatorFloor());
+		Set<String> curretnFloorState = currState.curr.getFloors().get(currState.curr.getElevatorFloor());
 		SubsetGen stateGen = new SubsetGen(curretnFloorState, ELEVATOR_CAPACITY);
 		
 		while (stateGen.hasNext()) {
 			List<String> state = stateGen.getNext();
-			List<String> nextSourceFloorState = new ArrayList<>(curretnFloorState);
+			Set<String> nextSourceFloorState = new HashSet<>(curretnFloorState);
 			nextSourceFloorState.removeAll(state);
 			
 			if (!isValidFloorConfiguration(nextSourceFloorState)) {
@@ -102,11 +102,11 @@ public class StateSpace {
 				
 				int nextFloorNumber = currState.curr.getElevatorFloor() + direction;
 				if (nextFloorNumber <= 4 && nextFloorNumber >= 1) {
-					List<String> currentTargetFloorState = currState.curr.getFloors().get(nextFloorNumber);
-					List<String> nextTargetFloorState = new ArrayList<>(currentTargetFloorState);
+					Set<String> currentTargetFloorState = currState.curr.getFloors().get(nextFloorNumber);
+					Set<String> nextTargetFloorState = new HashSet<>(currentTargetFloorState);
 					nextTargetFloorState.addAll(state);
 					if (isValidFloorConfiguration(nextTargetFloorState)) {
-						Map<Integer, List<String>> nextFloors = new HashMap<>(currState.curr.getFloors());
+						Map<Integer, Set<String>> nextFloors = new HashMap<>(currState.curr.getFloors());
 						nextFloors.put(nextFloorNumber, nextTargetFloorState);
 						nextFloors.put(currState.curr.getElevatorFloor(), nextSourceFloorState);
 						FloorState fs = new FloorState(nextFloors, nextFloorNumber);
@@ -147,7 +147,7 @@ public class StateSpace {
 		return false;
 	}
 	
-	public boolean isValidFloorConfiguration(List<String> devices) {
+	public boolean isValidFloorConfiguration(Set<String> devices) {
 		for (String dev : devices) {
 			char element = dev.charAt(0);
 			char deviceType = dev.charAt(1);
@@ -160,7 +160,7 @@ public class StateSpace {
 		return true;
 	}
 	
-	private boolean isChipInDanger(char elem, List<String> devices) {
+	private boolean isChipInDanger(char elem, Set<String> devices) {
 		
 		boolean inDanger = false;
 		boolean hasProtection = false;

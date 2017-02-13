@@ -10,8 +10,9 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,11 +46,11 @@ public class Day11Test {
 	// cur: {1=[2m], 2=[1g, 1m], 3=[2g], 4=[]}|| e = 2 {1=[2m], 2=[1m], 3=[2g, 1g], 4=[]}|| e = 3
 	@Test
 	public void testGenStates() {
-		Map<Integer, List<String>> floors = new HashMap<>();
-		floors.put(1, Collections.<String>emptyList());
-		floors.put(2, Collections.<String>emptyList());
-		floors.put(3, Arrays.asList("2m", "2g", "1m", "1g"));
-		floors.put(4, Collections.<String>emptyList());
+		Map<Integer, Set<String>> floors = new HashMap<>();
+		floors.put(1, Collections.<String>emptySet());
+		floors.put(2, Collections.<String>emptySet());
+		floors.put(3, new HashSet<>(Arrays.asList("2m", "2g", "1m", "1g")));
+		floors.put(4, Collections.<String>emptySet());
 		
 		FloorState fs = new FloorState(floors, 3);
 		InternalState internal = new InternalState(fs, null, 0);

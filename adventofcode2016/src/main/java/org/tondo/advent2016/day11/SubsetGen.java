@@ -2,6 +2,7 @@ package org.tondo.advent2016.day11;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class SubsetGen {
 
@@ -17,7 +18,7 @@ public class SubsetGen {
 	private int currentSetSize;
 	
 	
-	public SubsetGen(List<String> items, int k) {
+	public SubsetGen(Set<String> items, int k) {
 		this.maxK = items.size() >= k ? k : items.size();
 		this.items = new ArrayList<>(items);
 		this.size = this.items.size();

@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +33,7 @@ public class ConfigurationReader {
 	}
 	
 	private Map<String, Integer> elementMap = new HashMap<>();
-	private Map<Integer, List<String>> floors = new HashMap<>();
+	private Map<Integer, Set<String>> floors = new HashMap<>();
 	private int elementIdGen = 1;
 	
 	public void readConfiguration(BufferedReader reader) throws IOException {
@@ -57,9 +59,9 @@ public class ConfigurationReader {
 					elementId = this.elementIdGen++;
 				}
 				
-				List<String> floor = this.floors.get(floorNum);
+				Set<String> floor = this.floors.get(floorNum);
 				if (floor == null) {
-					floor = new ArrayList<>();
+					floor = new HashSet<>();
 					this.floors.put(floorNum, floor);
 				}
 				
@@ -72,15 +74,15 @@ public class ConfigurationReader {
 		// ensure that empty floors contains empty list, not null
 		for (int i = 1; i <= 4; i++) {
 			if(this.floors.get(i) == null) {
-				this.floors.put(i, Collections.<String>emptyList());
+				this.floors.put(i, Collections.<String>emptySet());
 			}
 		}
 		return new FloorState(this.floors, 1);
 	}
 	
 	public FloorState getEndState() {
-		Map<Integer, List<String>> endState = new HashMap<>();
-		List<String> finalFloor = new ArrayList<>();
+		Map<Integer, Set<String>> endState = new HashMap<>();
+		Set<String> finalFloor = new HashSet<>();
 		
 		List<Integer> elementIds = new ArrayList<>(elementMap.values());
 		Collections.sort(elementIds);
