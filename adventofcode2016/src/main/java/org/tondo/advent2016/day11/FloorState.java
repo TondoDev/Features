@@ -46,6 +46,10 @@ public class FloorState {
 			return rv;
 		}
 		
+		public int getFloorNum() {
+			return floorNum;
+		}
+		
 		public Map<Integer, Set<String>> getFloorInternal() {
 			return floorInternal;
 		}
@@ -122,21 +126,44 @@ public class FloorState {
 		return true;
 	}
 	
-	private boolean isHomomorphic(FloorState other) {
+	public boolean isHomomorphic(FloorState other) {
 		if(other == null) {
 			throw new IllegalArgumentException("Other objectg can't be null!");
 		}
 		
-//		for (Map.Entry<Integer, Set<String>> pair : this.floors.entrySet()) {
-//			Set<String> otherSet = other.getFloors().get(pair.getKey());
-//			if (pair.getValue().size() != otherSet.size()) {
-//				return false;
-//			}
-//			
-//			
-//		}
+		Map<Integer, Integer> mapping = new HashMap<>();
+		for (Floor elem : this.floors.values()) {
+			Map<Integer, Set<String>> internalThis = elem.getFloorInternal();
+			Map<Integer, Set<String>> internalOther = other.floors.get(elem.getFloorNum()).getFloorInternal();
+			if (!checkInternal(internalThis, internalOther, mapping)) {
+				return false;
+			}
+		}
 		
 		return true;
+	}
+	
+	private boolean checkInternal(Map<Integer, Set<String>> first, Map<Integer, Set<String>> second, Map<Integer, Integer> mapping) {
+		
+		// marked elements already mapped from second (inner)
+		Set<Integer> mappedSecond = new HashSet<>();
+		for (Map.Entry<Integer, Set<String>> entryOuter : first.entrySet()) {
+			for (Map.Entry<Integer, Set<String>> entryInner : second.entrySet()) {
+				if (!entryOuter.getValue().equals(entryInner.getValue()) || !mappedSecond.add(entryInner.getKey())) {
+					return false;
+				}
+				
+				Integer translation = mapping.get(entryOuter.getKey());
+				if (translation == null) {
+					mapping.put(entryOuter.getKey(), entryInner.getKey());
+				} else if (!translation.equals(entryInner.getKey())) {
+					return false;
+				}
+				
+				break;
+			}
+		}
+		return false;
 	}
 	
 	@Override
