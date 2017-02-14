@@ -22,4 +22,18 @@ public class Day12Test {
 			System.out.println("Day 12 - Part 1: Register 'a': " + program.getRegisterSet().getRegister("a").getValue());
 		}
 	}
+	
+	@Test
+	public void testPart2() throws IOException {
+		//day12Part1
+		InputStream input = this.getClass().getResourceAsStream("/day12/day12Part1.txt");
+		try (BufferedReader reader = new BufferedReader( new InputStreamReader(input, Charset.forName("UTF-8")))) {
+			Program program = new Program();
+			program.load(reader);
+			// initialize C register
+			program.getRegisterSet().getRegister("c").setValue(1);
+			program.execute();
+			System.out.println("Day 12 - Part 2: Register 'a': " + program.getRegisterSet().getRegister("a").getValue());
+		}
+	}
 }
