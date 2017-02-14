@@ -24,4 +24,9 @@ public class Register {
 	public String getName() {
 		return name;
 	}
+	
+	@Override
+	public String toString() {
+		return "REG["+this.name+"]";
+	}
 }

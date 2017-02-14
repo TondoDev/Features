@@ -5,4 +5,10 @@ public class CopyInstruction extends Instruction {
 	public void execute() {
 		getParamB().setValue(getParamA().getValue());
 	}
+	
+	@Override
+	public String getName() {
+		return "cpy";
+	}
 }
+

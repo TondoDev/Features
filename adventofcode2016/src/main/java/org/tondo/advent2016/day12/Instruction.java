@@ -21,6 +21,11 @@ public abstract class Instruction {
 			return this.value;
 		}
 		
+		@Override
+		public String toString() {
+			return Integer.toString(value);
+		}
+		
 	}
 
 	private Register paramA;
@@ -28,6 +33,7 @@ public abstract class Instruction {
 	
 	
 	public abstract void execute();
+	public abstract String getName();
 	
 	public void setParamA(int value) {
 		this.paramA = new ConstantRegister("constA", value);
@@ -55,5 +61,10 @@ public abstract class Instruction {
 	
 	public int moveProgram() {
 		return 1;
+	}
+	
+	@Override
+	public String toString() {
+		return getName() + " " + getParamA() + (getParamB() == null ? "" : (" " + getParamB()) );
 	}
 }

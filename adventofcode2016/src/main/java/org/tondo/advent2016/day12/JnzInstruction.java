@@ -12,4 +12,9 @@ public class JnzInstruction extends Instruction {
 	public int moveProgram() {
 		return this.jump ? getParamB().getValue() : 1;
 	}
+	
+	@Override
+	public String getName() {
+		return "jnz";
+	}
 }

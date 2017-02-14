@@ -11,4 +11,9 @@ public class DecInstruction extends Instruction{
 		int val = getParamA().getValue() - 1;
 		getParamA().setValue(val);
 	}
+	
+	@Override
+	public String getName() {
+		return "dec";
+	}
 }

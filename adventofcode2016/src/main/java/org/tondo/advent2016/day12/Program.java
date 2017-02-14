@@ -23,6 +23,10 @@ public class Program {
 		List<Instruction> loadedInstructions = new ArrayList<>();
 		while ((line = reader.readLine()) != null) {
 			Instruction instr = decoder.decode(line);
+			if (instr == null) {
+				throw new IllegalArgumentException("Not valid instruction: " + line);
+			}
+			
 			loadedInstructions.add(instr);
 		}
 		
@@ -41,5 +45,17 @@ public class Program {
 	
 	public RegisterSet getRegisterSet() {
 		return this.registers;
+	}
+	
+	@Override
+	public String toString() {
+		if (this.codeSegment == null) {
+			return "Program not loaded!";
+		}
+		StringBuilder sb = new StringBuilder();
+		for (Instruction instr : this.codeSegment) {
+			sb.append(instr.toString()).append('\n');
+		}
+		return sb.toString();
 	}
 }
