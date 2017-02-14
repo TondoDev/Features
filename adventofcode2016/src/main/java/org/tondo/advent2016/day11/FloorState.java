@@ -146,20 +146,22 @@ public class FloorState {
 	private boolean checkInternal(Map<Integer, Set<String>> first, Map<Integer, Set<String>> second, Map<Integer, Integer> mapping) {
 		
 		// marked elements already mapped from second (inner)
-		Set<Integer> mappedSecond = new HashSet<>();
+//		Set<Integer> mappedSecond = new HashSet<>();
 		int mappedRemaining = first.size();
 		for (Map.Entry<Integer, Set<String>> entryOuter : first.entrySet()) {
 			for (Map.Entry<Integer, Set<String>> entryInner : second.entrySet()) {
-				if (!entryOuter.getValue().equals(entryInner.getValue()) || !mappedSecond.add(entryInner.getKey())) {
-					return false;
-				}
-				
-				Integer translation = mapping.get(entryOuter.getKey());
-				if (translation == null) {
-					mapping.put(entryOuter.getKey(), entryInner.getKey());
-					mappedRemaining--;
-				} else if (translation.equals(entryInner.getKey())) {
-					mappedRemaining--;
+				if (entryOuter.getValue().equals(entryInner.getValue())) {
+					Integer translation = mapping.get(entryOuter.getKey());
+					if (translation == null) {
+						if (!mapping.values().contains(entryInner.getKey())) {
+							mapping.put(entryOuter.getKey(), entryInner.getKey());
+							mappedRemaining--;
+							break;
+						}
+					} else if (translation.equals(entryInner.getKey())) {
+						mappedRemaining--;
+						break;
+					}
 				}
 			}
 		}

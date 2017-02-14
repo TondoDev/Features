@@ -3,6 +3,7 @@ package org.tondo.advent2016.day11;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +65,7 @@ public class StateSpace {
 					this.minimalPath = constructMinPath(processing);
 					System.out.println("Min: " + minimum);
 				}
-			} else if (processing.steps < 50 && (minimum < 0 || (minimum - 1) > processing.steps)) {
+			}  else if (processing.steps < 30 && ((minimum < 0 || (minimum - 1) > processing.steps))) {
 				for (InternalState is : generateNextStates(processing)) {
 					this.fifo.push(is);	
 				}
@@ -84,7 +85,7 @@ public class StateSpace {
 		List<InternalState> rv = new ArrayList<>();
 		Set<String> curretnFloorState = currState.curr.getFloorConfiguration(currState.curr.getElevatorFloor());
 		SubsetGen stateGen = new SubsetGen(curretnFloorState, ELEVATOR_CAPACITY);
-		
+		boolean belowEmpty = isBelowEmpty(currState.curr);
 		while (stateGen.hasNext()) {
 			List<String> state = stateGen.getNext();
 			Set<String> nextSourceFloorState = new HashSet<>(curretnFloorState);
@@ -95,7 +96,7 @@ public class StateSpace {
 			}
 			
 			for (int direction : new int[] {-1, 1}) {
-				if (direction == -1 && isBelowEmpty(initialState)) {
+				if (direction == -1 && belowEmpty) {
 					continue;
 				}
 				
@@ -116,7 +117,29 @@ public class StateSpace {
 				}
 			}
 		}
-		return rv;
+		return removeHomomorphic(rv);
+	}
+	
+	private List<InternalState> removeHomomorphic(List<InternalState> s) {
+		
+		for (int out = 0; out < s.size(); out++) {
+			for (int in = out + 1; in < s.size(); in++) {
+				InternalState o = s.get(out);
+				InternalState i = s.get(in);
+				if ((o != null && i != null) && o.curr.isHomomorphic(i.curr)) {
+					s.set(in, null);
+				}
+			}
+		}
+		
+		Iterator<InternalState> iter = s.iterator();
+		while (iter.hasNext()) {
+			if (iter.next() == null) {
+				iter.remove();
+			}
+		}
+		
+		return s;
 	}
 	
 	private boolean isBelowEmpty(FloorState state) {

@@ -94,9 +94,9 @@ public class StateSpaceTest {
 				.build();
 		
 		FloorState end = new FloorStateBuilder(1)
-				.floor(4, "3m", "4g")
-				.floor(3, "3g", "1g")
-				.floor(2, "1m", "4m")
+				.floor(4, "3m", "1g")
+				.floor(3, "3g", "4g")
+				.floor(2, "4m", "1m")
 				.floor(1, "2m", "2g")
 				.build();
 		

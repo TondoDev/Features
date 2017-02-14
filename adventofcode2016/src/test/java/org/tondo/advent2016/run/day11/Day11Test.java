@@ -32,7 +32,7 @@ public class Day11Test {
 	@Test
 	public void testPart1() throws IOException {
 		// day11Part1.txt
-		InputStream input = this.getClass().getResourceAsStream("/day11/tmp.txt");
+		InputStream input = this.getClass().getResourceAsStream("/day11/day11Part1.txt");
 		try (BufferedReader reader = new BufferedReader( new InputStreamReader(input, Charset.forName("UTF-8")))) {
 			ConfigurationReader conf = new ConfigurationReader();
 			conf.readConfiguration(reader);
