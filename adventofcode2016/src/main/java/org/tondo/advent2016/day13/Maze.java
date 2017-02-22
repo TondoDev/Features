@@ -33,4 +33,8 @@ public class Maze {
 		
 		return (onesCnt % 2) != 0; 
 	}
+	
+	public int manhattanDistance(Coord one, Coord two) {
+		return Math.abs(one.getX() - two.getX()) + Math.abs(one.getY() - two.getY());
+	}
 }
