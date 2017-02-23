@@ -54,4 +54,17 @@ public class MazeNode {
 		return this.movementCost + this.heuristic;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		
+		if (!(obj instanceof MazeNode)) {
+			return false;
+		}
+		MazeNode other = (MazeNode)obj;
+		
+		return this.coord.equals(other.coord);
+	}
 }
