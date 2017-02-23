@@ -33,6 +33,13 @@ public class MazeNode {
 	private MazeNode parent;
 	private Coord coord;
 	
+	public MazeNode(Coord coord) {
+		this.coord = coord;
+		this.movementCost = 0;
+		this.heuristic = 0;
+		this.parent = null;
+	}
+	
 	
 	public Coord getCoord() {
 		return coord;
@@ -42,12 +49,24 @@ public class MazeNode {
 		return parent;
 	}
 	
+	public void setParent(MazeNode parent) {
+		this.parent = parent;
+	}
+	
 	public int getMovementCost() {
 		return movementCost;
 	}
 	
+	public void setMovementCost(int movementCost) {
+		this.movementCost = movementCost;
+	}
+	
 	public int getHeuristic() {
 		return heuristic;
+	}
+	
+	public void setHeuristic(int heuristic) {
+		this.heuristic = heuristic;
 	}
 	
 	public int getFValue() {
