@@ -16,12 +16,14 @@ public class Day13Test {
 	private static final int SAMPLE_LUCKY = 10;
 	private static final Coord START = Coord.c(1, 1);
 	private static final Coord END = Coord.c(31, 39);
+	private static final int MAX_STEPS = 50;
 
 	@Test
 	public void testPart1() {
 		Maze maze  = new Maze(LUCKY);
 		int shortest = maze.findFewestSteps(START, END);
 		System.out.println("Day 13 - Part 1: Fewest steps: " +  shortest); //90
+		System.out.println("Day 13 - Part 2: Reachable nodes: " +  maze.countReachableNodes(START, MAX_STEPS)); // 135
 	}
 	
 	@Test
@@ -39,6 +41,19 @@ public class Day13Test {
 			}
 			System.out.println();
 		}
+	}
+	
+	@Test
+	public void testReachibility() {
+		for (int y = 0; y < 10; y++) {
+			for (int x = 0; x <10; x++) {
+				System.out.print(NodeEvaluator.isWall(SAMPLE_LUCKY, x, y) ? "#" : ".");
+			}
+			System.out.println();
+		}
+		Maze maze = new Maze(SAMPLE_LUCKY);
+		int reach = maze.countReachableNodes(START, 2);
+		System.out.println("Reachable: " +  reach);
 	}
 	
 	@Test
