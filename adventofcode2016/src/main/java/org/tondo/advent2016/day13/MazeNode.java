@@ -15,12 +15,16 @@ public class MazeNode {
 		
 		@Override
 		public int compare(MazeNode o1, MazeNode o2) {
-			if (o1.getMovementCost() > o2.getMovementCost()) {
+			if (o1.getFValue() > o2.getFValue()) {
 				return 1;
-			} else if (o1.getMovementCost() < o2.getMovementCost()) {
+			} else if (o1.getFValue() < o2.getFValue()) {
 				return -1;
 			} else {
-				return Integer.valueOf(o1.heuristic).compareTo(o2.heuristic);
+				// little fake, because treeSet can't store object which are equals
+				// according to this comparator. So equals can be only when coordinates are same(necessary condition).
+				// Other cases can't be equal by other metrics.
+				int comRes = Integer.valueOf(o1.heuristic).compareTo(o2.heuristic);
+				return comRes != 0 ? comRes : o1.coord.equals(o2.coord) ? 0 : -1;
 			}
 		}
 	}
@@ -85,5 +89,19 @@ public class MazeNode {
 		MazeNode other = (MazeNode)obj;
 		
 		return this.coord.equals(other.coord);
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.coord.hashCode();
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.movementCost).append("  ").append(this.heuristic).append("\n");
+		sb.append("  ").append(this.getFValue()).append("  \n");
+		sb.append(this.coord).append("\n");
+		return sb.toString();
 	}
 }
