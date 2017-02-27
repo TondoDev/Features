@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
+import org.tondo.advent2016.day14.Hasher;
 import org.tondo.advent2016.day14.PadKeyGenerator;
 
 /**
@@ -15,7 +16,7 @@ import org.tondo.advent2016.day14.PadKeyGenerator;
  */
 public class Day14Test {
 	
-	private static final String MY_SALT = "";
+	private static final String MY_SALT = "cuanljph";
 	private static final String SAMPLE_SALT = "abc";
 	
 	private static final int NUM_OF_KEYS = 64;
@@ -31,7 +32,16 @@ public class Day14Test {
 	@Test
 	public void testSample() {
 		PadKeyGenerator generator = new PadKeyGenerator();
+		//8811
 		long index = generator.getIndexForKeyCount(SAMPLE_SALT, NUM_OF_KEYS);
+		assertEquals(22728, index);
+	}
+	
+	@Test
+	public void testStupid() {
+		PadKeyGenerator generator = new PadKeyGenerator();
+		//8811
+		long index = generator.stupid(MY_SALT, NUM_OF_KEYS);
 		assertEquals(22728, index);
 	}
 	
@@ -43,5 +53,31 @@ public class Day14Test {
 		assertTrue(m.find());
 		assertEquals("x", m.group(2));
 		assertEquals("xxx", m.group(1));
+	}
+	
+	@Test
+	public void testNegativeLookahead() {
+		Pattern test = Pattern.compile("(.)\\1\\1(?!\\1\\1)(.+|$)");
+		Matcher m = test.matcher("abcxxxxxa");
+		assertTrue(m.find());
+		for (int i = 0; i <= m.groupCount(); i++) {
+			System.out.println(i + ": " + m.group(i));
+		}
+	}
+	
+	@Test
+	public void testOtherAproach() {
+		Pattern test = Pattern.compile("(.)\\1+");
+		Matcher m = test.matcher("abbx");
+		assertTrue(m.find());
+		for (int i = 0; i <= m.groupCount(); i++) {
+			System.out.println(i + ": " + m.group(i));
+		}
+	}
+	
+	@Test
+	public void testHasToString() {
+		Hasher h = new Hasher("abc");
+		System.out.println(h.computeHashForIndex(39));
 	}
 }
