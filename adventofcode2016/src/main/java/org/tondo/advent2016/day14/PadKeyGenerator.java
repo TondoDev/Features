@@ -41,8 +41,9 @@ public class PadKeyGenerator {
 			}
 			index++;
 		}
-		
-		return register.getHighestTrippletIndex();
+		Collections.sort(validKeyIndices);
+		//printList(validKeyIndices);
+		return validKeyIndices.get(numOfKeys - 1);
 	}
 	
 	public long stupid(String salt, int numOfKeys) {
@@ -76,6 +77,13 @@ public class PadKeyGenerator {
 			index++;
 		}
 		Collections.sort(validKeyIndices);
+		printList(validKeyIndices);
 		return validKeyIndices.get(validKeyIndices.size() - 1);
+	}
+	
+	private void printList(List<Long> items)  {
+		for (Long l : items) {
+			System.out.println(l);
+		}
 	}
 }
