@@ -17,9 +17,16 @@ public class PadKeyGenerator {
 	private static final int KEY_LIFE = 1000;
 	
 	public long getIndexForKeyCount(String salt, int numOfKeys) {
-		
+		return getIndexForKeyCount(salt, numOfKeys, new Hasher(salt));
+	}
+	
+	public long getIndexForKeyCount(String salt, int numOfKeys, int strechFactor) {
+		return getIndexForKeyCount(salt, numOfKeys, new Hasher(salt, strechFactor));
+	}
+	
+	
+	private long getIndexForKeyCount(String salt, int numOfKeys, Hasher hasher) {
 		long index = 0;
-		Hasher hasher = new Hasher(salt);
 		KeyCache register = new KeyCache(KEY_LIFE);
 		List<Long> validKeyIndices = new ArrayList<>();
 		while (validKeyIndices.size() < numOfKeys) {

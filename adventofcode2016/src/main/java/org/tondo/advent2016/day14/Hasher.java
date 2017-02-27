@@ -11,10 +11,13 @@ import java.security.NoSuchAlgorithmException;
 public class Hasher {
 
 	private String salt;
+	private int stretchCount;
 	private MessageDigest digest;
 	
-	public Hasher(String salt) {
+	
+	public Hasher(String salt, int strech) {
 		this.salt = salt;
+		this.stretchCount = strech;
 		
 		try {
 			this.digest = MessageDigest.getInstance("MD5");
@@ -22,11 +25,16 @@ public class Hasher {
 			throw new IllegalStateException("MD5 algorithm not available", e);
 		}
 	}
+	public Hasher(String salt) {
+		this(salt, 0);
+	}
 	
 	public String computeHashForIndex(long index) {
-		String tohash = this.salt + index;
-		byte[] binaryHash = digest.digest(tohash.getBytes());
-		return byteArrayToString(binaryHash);
+		String stringHex = computeHashForString(this.salt + index);
+		for (int i = 0; i < this.stretchCount; i++) {
+			stringHex = computeHashForString(stringHex);
+		}
+		return stringHex;
 	}
 	
 	public String byteArrayToString(byte[] arr) {
@@ -38,4 +46,11 @@ public class Hasher {
 		}
 		return sb.toString();
 	}
+	
+	public String computeHashForString(String value) {
+		byte[] binaryHash = digest.digest(value.getBytes());
+		return byteArrayToString(binaryHash);
+	}
+	
+	
 }

@@ -20,12 +20,15 @@ public class Day14Test {
 	private static final String SAMPLE_SALT = "abc";
 	
 	private static final int NUM_OF_KEYS = 64;
+	private static final int STRETCH = 2016;
 	
 	@Test
 	public void testPart1() {
 		PadKeyGenerator generator = new PadKeyGenerator();
 		long index = generator.getIndexForKeyCount(MY_SALT, NUM_OF_KEYS);
 		System.out.println("Day 14 - Part 1: Index after all keys: " + index); //23769
+		long stretchedIndex = generator.getIndexForKeyCount(MY_SALT, NUM_OF_KEYS, STRETCH);
+		System.out.println("Day 14 - Part 2: Index after stretched keys: " + stretchedIndex); //20606
 	}
 
 	@Test
@@ -39,15 +42,15 @@ public class Day14Test {
 	@Test
 	public void testSample() {
 		PadKeyGenerator generator = new PadKeyGenerator();
-		//8811
 		long index = generator.getIndexForKeyCount(SAMPLE_SALT, NUM_OF_KEYS);
 		assertEquals(22728, index);
+		
+		assertEquals(22551,  generator.getIndexForKeyCount(SAMPLE_SALT, NUM_OF_KEYS, STRETCH));
 	}
 	
 	@Test
 	public void testStupid() {
 		PadKeyGenerator generator = new PadKeyGenerator();
-		//8811
 		long index = generator.stupid(MY_SALT, NUM_OF_KEYS);
 		assertEquals(22728, index);
 	}
@@ -83,8 +86,20 @@ public class Day14Test {
 	}
 	
 	@Test
-	public void testHasToString() {
+	public void testHashToString() {
 		Hasher h = new Hasher("abc");
 		System.out.println(h.computeHashForIndex(39));
+	}
+	
+	@Test
+	public void testKeyStretching() {
+		Hasher h = new Hasher("abc");
+		String aaa = h.computeHashForIndex(0);
+		System.out.println(aaa);
+		String bbb = h.computeHashForString(aaa);
+		System.out.println(bbb);
+		
+		Hasher strechHasher = new Hasher("abc", 1);
+		System.out.println(strechHasher.computeHashForIndex(0));
 	}
 }
