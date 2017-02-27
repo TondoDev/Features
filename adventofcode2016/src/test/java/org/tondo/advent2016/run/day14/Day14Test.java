@@ -22,10 +22,10 @@ public class Day14Test {
 	private static final int NUM_OF_KEYS = 64;
 
 	@Test
-	public void testPart1() {
+	public void testPart1Stupid() {
 		PadKeyGenerator generator = new PadKeyGenerator();
-		long index = generator.getIndexForKeyCount(MY_SALT, NUM_OF_KEYS);
-		System.out.println("Day 14 - Part 1: Index after all keys: " + index);
+		long index = generator.stupid(MY_SALT, NUM_OF_KEYS);
+		System.out.println("Day 14 - Part 1: Index after all keys: " + index); //23769
 	}
 	
 	
