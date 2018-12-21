@@ -1,4 +1,4 @@
-package org.tondo.advent2018.run.day1;
+package org.tondo.advent2018.run;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
