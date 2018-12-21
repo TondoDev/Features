@@ -184,7 +184,14 @@ public class Day3Test {
 		System.out.println(m.group(3));
 		System.out.println(m.group(4));
 		System.out.println(m.group(5));
-		System.out.println(m.group(6));
+		
+		Exception ex = null;
+		try {
+			System.out.println(m.group(6));
+		} catch (IndexOutOfBoundsException e) {
+			ex = e;
+		}
+		Assert.assertEquals(IndexOutOfBoundsException.class, ex.getClass());
 		System.out.println(m.find());
 	}
 
