@@ -31,8 +31,12 @@ public class TaskDay4  extends DayTaskBase{
 	
 	@Test
 	public void testPartTwoSolution() throws Exception {
-		System.out.println(getPartTwoSolution());
-		//assertEquals("", getPartTwoSolution());
+		assertEquals("1133", getPartTwoSolution());
+	}
+	
+	@Test
+	public void testPartTwoSolutionBF() throws Exception {
+		assertEquals("1133", getPartTwoSolutionBF());
 	}
 	
 	
@@ -82,9 +86,23 @@ public class TaskDay4  extends DayTaskBase{
 		int minNum = Integer.parseInt(parts[0]);
 		int maxNum = Integer.parseInt(parts[1]);
 		
-//		return "" + algorithmicWay(minNum, maxNum, chArr -> {
-//			return getRepeatingGroups(chArr).contains(2);
-//		});
+		return "" + algorithmicWay(minNum, maxNum, chArr -> {
+			return getRepeatingGroups(chArr).contains(2);
+		});
+		
+	}
+	
+	public String getPartTwoSolutionBF() throws Exception {
+		String line;
+		// same input
+		try (BufferedReader reader = getPartOneInput()) {
+			line = reader.readLine();
+		}
+		
+		String[] parts = line.split("-");
+		int minNum = Integer.parseInt(parts[0]);
+		int maxNum = Integer.parseInt(parts[1]);
+		
 		
 		return "" + brutalForcePt2(minNum, maxNum);
 	}
@@ -95,7 +113,7 @@ public class TaskDay4  extends DayTaskBase{
 		int currNum = getFirstValidNumber(minNum, checker);
 		while (currNum <= maxNum) {
 			count++;
-			System.out.println("" + count + ": " + currNum);
+//			System.out.println("" + count + ": " + currNum);
 			currNum = getNextNumber(currNum, checker);
 		}
 		
