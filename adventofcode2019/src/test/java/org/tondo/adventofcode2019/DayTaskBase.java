@@ -18,6 +18,10 @@ public abstract class DayTaskBase {
 	
 	
 	public BufferedReader inputForPart(int part) {
+		return inputForDayAndPart(this.day, part);
+	}
+	
+	public BufferedReader inputForDayAndPart(int day, int part) {
 		String inputPath = "/day"+day +  "/inputPart"+part+".txt";
 		
 		try {
